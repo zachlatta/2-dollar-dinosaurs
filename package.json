@@ -1,0 +1,19 @@
+{
+  "name": "2-dollar-dinosaurs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/zachlatta/2-dollar-dinosaurs"
+  },
+  "author": "Zach Latta <zach@zachlatta.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zachlatta/2-dollar-dinosaurs/issues"
+  },
+  "homepage": "https://github.com/zachlatta/2-dollar-dinosaurs"
+}

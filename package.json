@@ -24,7 +24,6 @@
     "dinosaurs": "dinosaurs.js"
   },
   "dependencies": {
-    "commander": "^2.5.0",
-    "twilio": "^1.7.0"
+    "commander": "^2.5.0"
   }
 }

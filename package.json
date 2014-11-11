@@ -2,7 +2,7 @@
   "name": "2-dollar-dinosaurs",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dinosaurs.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,10 +10,21 @@
     "type": "git",
     "url": "git://github.com/zachlatta/2-dollar-dinosaurs"
   },
-  "author": "Zach Latta <zach@zachlatta.com>",
+  "author": {
+    "name": "Zach Latta",
+    "email": "zach@zachlatta.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/zachlatta/2-dollar-dinosaurs/issues"
   },
-  "homepage": "https://github.com/zachlatta/2-dollar-dinosaurs"
+  "homepage": "https://github.com/zachlatta/2-dollar-dinosaurs",
+  "preferGlobal": true,
+  "bin": {
+    "dinosaurs": "dinosaurs.js"
+  },
+  "dependencies": {
+    "commander": "^2.5.0",
+    "twilio": "^1.7.0"
+  }
 }

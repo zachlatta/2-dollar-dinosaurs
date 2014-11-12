@@ -24,6 +24,7 @@
     "dinosaurs": "dinosaurs.js"
   },
   "dependencies": {
+    "chance": "^0.6.1",
     "commander": "^2.5.0",
     "nightmare": "^1.6.5"
   }

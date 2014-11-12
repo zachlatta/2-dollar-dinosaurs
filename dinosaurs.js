@@ -24,6 +24,11 @@ new Nightmare()
     .type('#account_phone3', user.phone.line)
     .type('#account_pwd', user.password)
     .type('#account_confirm_pwd', user.password)
+    .click('.creat-acc')
+    .wait()
+    .type('#custinfo_first_name', user.first_name)
+    .type('#custinfo_last_name', user.last_name)
+    .click('#id_link_save_changes')
     .wait()
     .screenshot('/tmp/img.png')
     .run(function (err, nightmare) {
@@ -34,10 +39,11 @@ new Nightmare()
 
 function generateUser () {
   return {
-    name: 'John Doe',
+    first_name: 'John',
+    last_name: 'Doe',
     email: chance.email(),
     phone: {
-      npa: randomNumericString(3),
+      npa: '424',
       co: randomNumericString(3),
       line: randomNumericString(4)
     },

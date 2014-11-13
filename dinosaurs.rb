@@ -14,7 +14,7 @@ def generate_user
   return {
     first_name: 'John',
     last_name: 'Smith',
-    email: Faker::Internet.email,
+    email: "naruto137+dinosaurs-#{Faker::Number.number(10)}@gmail.com",
     phone: {
       npa: Faker::PhoneNumber.area_code,
       co: Faker::PhoneNumber.exchange_code,
@@ -44,20 +44,24 @@ driver.find_element(:id, 'custinfo_first_name').send_keys user[:first_name]
 driver.find_element(:id, 'custinfo_last_name').send_keys user[:last_name]
 driver.find_element(:id, 'id_link_save_changes').click
 
-# now to order! nom nom
+# navigate to the menu page
 driver.navigate.to 'https://www.leapset.com/order/restaurant/dinosaursmarket94114'
-order_el = driver.find_elements(:class, 'meal-menu-des').find { |el|
-  el.text.downcase.include? 'pork and shrimp'
-}
-order_el.click
 
-# wait for modal to pop up
-wait = Selenium::WebDriver::Wait.new(timeout: 10)
-wait.until { driver.find_element(class: 'cust-txt-tp-1') }
+byebug
 
-# enter special instructions and add to cart!
-driver.find_element(:class, 'cust-txt-tp-1').send_keys 'have peanut sauce'
-driver.find_element(:class, 'add-item').click
+# # now add the order! nom nom
+# order_el = driver.find_elements(:class, 'meal-menu-des').find { |el|
+#   el.text.downcase.include? 'pork and shrimp'
+# }
+# order_el.click
+
+# # wait for modal to pop up
+# wait = Selenium::WebDriver::Wait.new(timeout: 10)
+# wait.until { driver.find_element(class: 'cust-txt-tp-1') }
+
+# # enter special instructions and add to cart!
+# driver.find_element(:class, 'cust-txt-tp-1').send_keys 'have peanut sauce'
+# driver.find_element(:class, 'add-item').click
 
 # wait for modal to close
 wait = Selenium::WebDriver::Wait.new(timeout: 10)
@@ -69,12 +73,14 @@ driver.find_element(:id, 'pickup_discount_code').send_keys coupon_code
 driver.find_element(:xpath, '//*[@id="id_pickup_form"]/div[8]/div/div/div[2]/a').click
 
 # billing info
-driver.find_element(:id, 'payment_nameoncard').send_keys 'TODO'
-driver.find_dropdown(:id, 'payment_cctype').select_by(:text, 'TODO')
-driver.find_element(:id, 'payment_ccnumber').send_keys 'TODO'
-driver.find_dropdown(:id, 'payment_expdatem').select_by(:text, 'TODO')
-driver.find_dropdown(:id, 'payment_expdatey').select_by(:text, 'TODO')
-driver.find_element(:id, 'payment_cvvcode').send_keys 'TODO'
+driver.find_element(:id, 'payment_nameoncard').send_keys 'John Smith'
+driver.find_element(:id, 'payment_ccnumber').send_keys ENV["AMEX_NUM"]
+driver.find_dropdown(:id, 'payment_cctype').select_by(:text, 'American Express')
+driver.find_dropdown(:id, 'payment_expdatem').select_by(:text, ENV["AMEX_MONTH"])
+driver.find_dropdown(:id, 'payment_expdatey').select_by(:text, ENV["AMEX_YEAR"])
+driver.find_element(:id, 'payment_cvvcode').send_keys ENV["AMEX_CVV"]
+
+byebug; pause = true
 
 # place the order! nom nom!
 driver.find_element(:class, 'submit-order-buttn').click

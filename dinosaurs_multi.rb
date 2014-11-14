@@ -1,6 +1,5 @@
 require 'selenium-webdriver'
 require 'faker'
-require 'byebug'
 
 def log(line)
   open('order_log.txt', 'a') do |f|
@@ -61,7 +60,6 @@ class LeapDriver < Selenium::WebDriver::Driver
     self.navigate.to 'https://www.leapset.com/order/profile/create'
 
     # create account
-
     self.find_element(:id, 'account_email').send_keys user[:email]
     self.find_element(:id, 'account_phone1').send_keys user[:phone][:npa]
     self.find_element(:id, 'account_phone2').send_keys user[:phone][:co]
@@ -70,8 +68,9 @@ class LeapDriver < Selenium::WebDriver::Driver
     self.find_element(:id, 'account_confirm_pwd').send_keys user[:password]
     self.find_element(:css, '.creat-acc').click
 
-    # set user's name
+    self.wait_until_visible(:id, 'custinfo_first_name')
 
+    # set user's name
     self.find_element(:id, 'custinfo_first_name').send_keys user[:first_name]
     self.find_element(:id, 'custinfo_last_name').send_keys user[:last_name]
     self.find_element(:id, 'id_link_save_changes').click
@@ -127,13 +126,14 @@ class LeapDriver < Selenium::WebDriver::Driver
     num_rows = self.find_elements(:class, 'row-main-product').length
 
     num_rows.times do |i|
-
       row = self.find_elements(:class, 'row-main-product')[i]
       cols = row.find_elements(:css, 'td')
 
+      name = cols[1].text
+
       item = {
         quantity: cols[0].text,
-        name: cols[1].text,
+        name: name,
         price: get_price(name) 
       }
 
@@ -159,7 +159,7 @@ class LeapDriver < Selenium::WebDriver::Driver
     order.each do |item|
       item[:quantity].to_i.times do
         self.manage.delete_all_cookies
-        self.signup
+        self.signup generate_user
         self.go_to_menu
         self.add_item(item[:name], 1)
 
@@ -170,7 +170,7 @@ class LeapDriver < Selenium::WebDriver::Driver
 
         self.checkout
 
-        checkout_price_string = self.find_element(:id, 'id_cart_total_amount_row').text
+        checkout_price_string = self.find_element(:xpath, '//*[@id="main-container"]/div/div/div[2]/div[2]/div/div').text
         checkout_price = checkout_price_string.gsub(/[^0-9\.]/, '').to_f
 
         log "#{item[:name]}\t$#{checkout_price}"
@@ -205,6 +205,8 @@ class LeapDriver < Selenium::WebDriver::Driver
     self.find_element(:id, 'payment_cvvcode').send_keys ENV['CC_CVV']
 
     wait_for_enter 'Please confirm your order. Exit the program to cancel the order'
+
+    self.find_element(:class, 'submit-order-buttn').click
   end
 end
 

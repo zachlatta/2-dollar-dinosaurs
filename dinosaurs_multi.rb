@@ -9,18 +9,32 @@ def log(line)
 end
 
 def read_log
-  f = File.open('order_log.txt', "r")
+  f = File.open('order_log.txt', 'r')
   f.each_line do |line|
     puts line
   end
   f.close
-
 end
 
-def wait_for_enter(message="")
+def wait_for_enter(message='')
   puts message
-  puts "Press Enter To Continue..."
+  puts 'Press Enter To Continue...'
   gets
+end
+
+def generate_user
+  Faker::Config.locale = 'en-US'
+  {
+    first_name: 'John',
+    last_name: 'Smith',
+    email: "naruto137+dinosaurs-#{Faker::Number.number(10)}@gmail.com",
+    phone: {
+      npa: Faker::PhoneNumber.area_code,
+      co: Faker::PhoneNumber.exchange_code,
+      line: Faker::PhoneNumber.subscriber_number
+    },
+    password: 'foobarfoobar1'
+  }
 end
 
 class Selenium::WebDriver::Driver
@@ -38,34 +52,12 @@ class Selenium::WebDriver::Driver
     wait = Selenium::WebDriver::Wait.new(timeout: timeout)
     wait.until { self.find_elements(type, selector).empty? }
   end
-
-
 end
 
 class LeapDriver < Selenium::WebDriver::Driver
-
   attr_accessor :user, :order, :ordered, :restaurant_url, :total_price
 
-  def generate_user
-    Faker::Config.locale = 'en-US'
-    user =  {
-      first_name: 'John',
-      last_name: 'Smith',
-      email: "naruto137+dinosaurs-#{Faker::Number.number(10)}@gmail.com",
-      phone: {
-        npa: Faker::PhoneNumber.area_code,
-        co: Faker::PhoneNumber.exchange_code,
-        line: Faker::PhoneNumber.subscriber_number
-      },
-      password: 'foobarfoobar1'
-    }
-
-    self.user = user
-  end
-
-  def signup
-    generate_user
-
+  def signup(user)
     self.navigate.to 'https://www.leapset.com/order/profile/create'
 
     # create account
@@ -86,7 +78,7 @@ class LeapDriver < Selenium::WebDriver::Driver
   end
 
   def find_item(item)
-    order_el = self.find_elements(:class, 'meal-menu-des').find { |el|
+    self.find_elements(:class, 'meal-menu-des').find { |el|
       el.text.downcase.include? item.downcase
     }
   end
@@ -94,21 +86,19 @@ class LeapDriver < Selenium::WebDriver::Driver
   def get_price(name)
     item = find_item(name)
     price_string = item.find_element(:xpath, "../div[@class='meal-menu-price']").text
-    price = price_string.gsub("$", "").to_f
+    price_string.gsub('$', '').to_f
   end
 
   def find_cheapest_item
     item_prices = self.find_elements(:class, 'meal-menu-price').map { |el|
-      price = el.text.gsub("$", "").to_f
+      price = el.text.gsub('$', '').to_f
       name = el.find_element(:xpath, "../div[@class='meal-menu-des']").text
       {name: name, price: price}
     }
-    min = item_prices.min_by { |item| item[:price] }
-
-    cheapest_item = min
+    item_prices.min_by { |item| item[:price] }
   end
 
-  def add_item(item, quantity, custom_instructions="")
+  def add_item(item, quantity, custom_instructions='')
     order_el = find_item(item)
     order_el.click
 
@@ -127,30 +117,24 @@ class LeapDriver < Selenium::WebDriver::Driver
     begin
       wait_until_invisible(:class, 'add-item')
     rescue
-      wait_for_enter "Please choose your preferences and click the button to add"
+      wait_for_enter 'Please choose your preferences and click the button to add'
     end
   end
 
   def read_items
     order = []
 
-    num_rows = self.find_elements(:class, "row-main-product").length
+    num_rows = self.find_elements(:class, 'row-main-product').length
 
     num_rows.times do |i|
 
-      row = self.find_elements(:class, "row-main-product")[i]
-      cols = row.find_elements(:css, "td")
-
-
-      quantity = cols[0].text
-      name = cols[1].text
-
-      price = get_price(name)
+      row = self.find_elements(:class, 'row-main-product')[i]
+      cols = row.find_elements(:css, 'td')
 
       item = {
         quantity: cols[0].text,
         name: cols[1].text,
-        price: price
+        price: get_price(name) 
       }
 
       order << item
@@ -169,26 +153,15 @@ class LeapDriver < Selenium::WebDriver::Driver
 
     self.order = self.read_items
 
-    log(Time.now.strftime("\n\n\n%A, %m/%d %H:%M"))
+    log(Time.now.strftime('\n\n\n%A, %m/%d %H:%M'))
     log(self.restaurant_url)
 
     order.each do |item|
-
       item[:quantity].to_i.times do
-
-        # byebug
-
         self.manage.delete_all_cookies
-        # byebug
-
         self.signup
-        # byebug
-
         self.go_to_menu
-        # byebug
-        
         self.add_item(item[:name], 1)
-        # byebug
 
         if item[:price] < 5.01
           num_cheap_thing = ((5.01 - item[:price]) / cheapest_item[:price]).ceil
@@ -197,59 +170,49 @@ class LeapDriver < Selenium::WebDriver::Driver
 
         self.checkout
 
-        checkout_price_string = self.find_element(:id, "id_cart_total_amount_row").text
-        checkout_price = checkout_price_string.gsub(/[^0-9\.]/, "").to_f
+        checkout_price_string = self.find_element(:id, 'id_cart_total_amount_row').text
+        checkout_price = checkout_price_string.gsub(/[^0-9\.]/, '').to_f
 
         log "#{item[:name]}\t$#{checkout_price}"
+
         self.total_price += checkout_price
       end
-
-
     end
-    log "Total: #{self.total_price}"
 
+    log "Total: #{self.total_price}"
     read_log
+
+    private
   end
 
   def checkout
-    self.wait_until_visible(:xpath, '//*[@id="id_shopping_cart_checkout_form"]/ul/li[3]/input')
+    self.wait_until_visible(:xpath, "//*[@id='id_shopping_cart_checkout_form']/ul/li[3]/input")
 
     # checkout
-    self.find_element(:xpath, '//*[@id="id_shopping_cart_checkout_form"]/ul/li[3]/input').click
+    self.find_element(:xpath, "//*[@id='id_shopping_cart_checkout_form']/ul/li[3]/input").click
     self.find_element(:id, 'pickup_discount_code').send_keys '5OFF'
 
-    self.find_element(:xpath, '//*[@id="id_pickup_form"]/div[8]/div/div/div[2]/a').click
+    self.find_element(:xpath, "//*[@id='id_pickup_form']/div[8]/div/div/div[2]/a").click
 
     # billing info
     self.find_element(:id, 'payment_nameoncard').send_keys 'John Smith'
-    self.find_element(:id, 'payment_ccnumber').send_keys ENV["AMEX_NUM"]
+    self.find_element(:id, 'payment_ccnumber').send_keys ENV['AMEX_NUM']
     self.find_dropdown(:id, 'payment_cctype').select_by(:text, 'American Express')
-    self.find_dropdown(:id, 'payment_expdatem').select_by(:text, ENV["AMEX_MONTH"])
-    self.find_dropdown(:id, 'payment_expdatey').select_by(:text, ENV["AMEX_YEAR"])
-    self.find_element(:id, 'payment_cvvcode').send_keys ENV["AMEX_CVV"]
+    self.find_dropdown(:id, 'payment_expdatem').select_by(:text, ENV['AMEX_MONTH'])
+    self.find_dropdown(:id, 'payment_expdatey').select_by(:text, ENV['AMEX_YEAR'])
+    self.find_element(:id, 'payment_cvvcode').send_keys ENV['AMEX_CVV']
 
-    wait_for_enter "Please confirm your order. Exit the program to cancel the order"
-
-    # place the order! nom nom!
-    # self.find_element(:class, 'submit-order-buttn').click
-
+    wait_for_enter 'Please confirm your order. Exit the program to cancel the order'
   end
-
 end
 
 
 f = LeapDriver.for :firefox
 
-f.navigate.to "https://www.leapset.com/order/ca-san-francisco"
+f.navigate.to 'https://www.leapset.com/order/ca-san-francisco'
 
-wait_for_enter "Order what you want!"
+wait_for_enter 'Order what you want!'
 
 f.restaurant_url = f.current_url
-
-# THIS IS WHERE YOU ORDER
-# f.add_item("Avocado Shake", 2)
-# f.add_item("Watermelon Lychee", 2)
-
-# byebug
 
 f.order_items

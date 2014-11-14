@@ -27,7 +27,7 @@ def generate_user
   {
     first_name: 'John',
     last_name: 'Smith',
-    email: "naruto137+dinosaurs-#{Faker::Number.number(10)}@gmail.com",
+    email: "zach+dinosaurs-#{Faker::Number.number(10)}@zachlatta.com",
     phone: {
       npa: Faker::PhoneNumber.area_code,
       co: Faker::PhoneNumber.exchange_code,
@@ -195,12 +195,14 @@ class LeapDriver < Selenium::WebDriver::Driver
     self.find_element(:xpath, "//*[@id='id_pickup_form']/div[8]/div/div/div[2]/a").click
 
     # billing info
-    self.find_element(:id, 'payment_nameoncard').send_keys 'John Smith'
-    self.find_element(:id, 'payment_ccnumber').send_keys ENV['AMEX_NUM']
-    self.find_dropdown(:id, 'payment_cctype').select_by(:text, 'American Express')
-    self.find_dropdown(:id, 'payment_expdatem').select_by(:text, ENV['AMEX_MONTH'])
-    self.find_dropdown(:id, 'payment_expdatey').select_by(:text, ENV['AMEX_YEAR'])
-    self.find_element(:id, 'payment_cvvcode').send_keys ENV['AMEX_CVV']
+    self.find_element(:id, 'payment_nameoncard').send_keys ENV['CC_NAME']
+    self.find_element(:id, 'payment_ccnumber').send_keys ENV['CC_NUMBER']
+    self.find_dropdown(:id, 'payment_cctype').select_by(:text, ENV['CC_TYPE'])
+    self.find_dropdown(:id, 'payment_expdatem')
+      .select_by(:text, ENV['CC_EXP_MONTH'])
+    self.find_dropdown(:id, 'payment_expdatey')
+      .select_by(:text, ENV['CC_EXP_YEAR'])
+    self.find_element(:id, 'payment_cvvcode').send_keys ENV['CC_CVV']
 
     wait_for_enter 'Please confirm your order. Exit the program to cancel the order'
   end

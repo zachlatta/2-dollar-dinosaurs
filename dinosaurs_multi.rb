@@ -178,7 +178,7 @@ class LeapDriver < Selenium::WebDriver::Driver
         checkout_price_string = self.find_element(:css, '#id_cart_total_amount_row > p:nth-child(1) > span:nth-child(1)').text
         checkout_price = checkout_price_string.gsub(/[^0-9\.]/, '').to_f
 
-        log "#{item[:name]}\t$#{checkout_price}"
+        log "#{item[:name]}\t$#{checkout_price.to_money}"
 
         self.total_price += checkout_price
 
@@ -188,7 +188,7 @@ class LeapDriver < Selenium::WebDriver::Driver
       end
     end
 
-    log "Total: #{self.total_price}"
+    log "Total: #{self.total_price.to_money}"
     read_log
   end
 

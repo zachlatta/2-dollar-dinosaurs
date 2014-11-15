@@ -92,3 +92,22 @@ Saturday, 11/15 12:09
 Saturday, 11/15 12:16
 https://www.leapset.com/order/restaurant/dinosaursmarket94114
 Pork and Shrimp	$1.25
+
+
+
+Saturday, 11/15 12:19
+https://www.leapset.com/order/restaurant/dinosaursmarket94114
+Large Chicken Cabbage	$0.75
+Shaking Beef	$1.41
+Mango Mint	$0.1
+Total: 2.2600000000000002
+
+
+
+Saturday, 11/15 12:26
+https://www.leapset.com/order/restaurant/dinosaursmarket94114
+Pork and Shrimp	$1.25
+Pork and Shrimp	$1.25
+Chicken and Shrimp	$1.25
+Pork and Shrimp	$1.25
+Total: 5.0

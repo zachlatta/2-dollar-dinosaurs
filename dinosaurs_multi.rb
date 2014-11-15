@@ -61,6 +61,7 @@ class LeapDriver < Selenium::WebDriver::Driver
   end
 
   def find_item(item)
+    self.wait_until_visible(:class, "meal-menu-des")
     self.find_elements(:class, 'meal-menu-des').find { |el|
       el.text.downcase.include? item.downcase
     }
@@ -229,7 +230,8 @@ end
 f = LeapDriver.for :firefox
 
 if is_flag_on?("--dino-seed") || is_flag_on?("--dino")
-  f.navigate.to 'https://www.leapset.com/order/restaurant/dinosaursmarket94114'
+  f.restaurant_url = 'https://www.leapset.com/order/restaurant/dinosaursmarket94114'
+  f.go_to_menu
 
   if is_flag_on? "--dino-seed"
     f.add_item("pork and shrimp", 1, "Popopopo")

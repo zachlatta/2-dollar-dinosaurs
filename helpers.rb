@@ -4,6 +4,12 @@ class Float
   end
 end
 
+class Fixnum
+  def to_money
+    "$%.2f" % self
+  end
+end
+
 def is_flag_on?(flag)
   ARGV.include?(flag)
 end

@@ -12,18 +12,29 @@ if is_flag_on?("--help")
   puts "./dinosaurs_multi --debug # byepry instead of press enter and inserts fake credit card information"
   puts "./dinosaurs_multi --no-confirm #you do not need to confirm an order, it just orders"
   puts "./dinosuars_multi --dino # change to the dinosaurs page"
+  puts "./dinosuars_multi --oni # change to the dinosaurs page"
   puts "./dinosaurs_multi --dino-seed # will add dinosaurs things to the menu"
   puts "./dinosaurs_multi --random_sleep # will sleep for random intervals between signups"
   puts "./dinosaurs_multi --custom # pauses after adding an item"
+  puts "./dinosaurs_multi --custom_bundling # pauses after adding an item so you can add more after it."
+  puts "./dinosaurs_multi --zach # makes adds zach to the front of the queue"
+  puts "./dinosaurs_multi --jonathan # makes adds zach to the front of the queue"
+  puts "./dinosaurs_multi --no-cheap # does not try to add cheap items"
+  puts "./dinosaurs_multi --manual # does not do automatic ordering"
   exit
 end
 
-def generate_user
+# $names = [%w{Oris Xia}, %w{Jennifer Kwok}, %w{Lucy Tang}, %w{Benjamin Summers}, %w{Kevin Wang}, %w{Colton Pierson}, %w{Gwen Grinsmead}].shuffle!
+$names = [%w{Aziz Pabani}, %w{Alex Crosson}, %w{Pratham Mittal}, %w{Zubin, Scharma}]
+# $names.unshift %w{Zach Latta} if is_flag_on? "--zach"
+# $names.unshift %w{Jonathan Leung} if is_flag_on? "--jonathan"
+
+def generate_user(i=0)
   Faker::Config.locale = 'en-US'
   {
-    first_name: 'John',
-    last_name: 'Smith',
-    email: "zach+dinosaurs-#{Faker::Number.number(10)}@zachlatta.com",
+    first_name: $names[i][0],
+    last_name: $names[i][1],
+    email: "naruto137+dinosaurs+#{Faker::Number.number(10)}@gmail.com",
     phone: {
       npa: Faker::PhoneNumber.area_code,
       co: Faker::PhoneNumber.exchange_code,
@@ -79,6 +90,7 @@ class LeapDriver < Selenium::WebDriver::Driver
       name = el.find_element(:xpath, "../div[@class='meal-menu-des']").text
       {name: name, price: price}
     }
+    item_prices.reject! { |item| item[:price] == 0.00 }
     item_prices.min_by { |item| item[:price] }
   end
 
@@ -161,14 +173,21 @@ class LeapDriver < Selenium::WebDriver::Driver
     log(Time.now.strftime('%A, %m/%d %H:%M'))
     log(self.restaurant_url)
 
-    order.each do |item|
+    order_number = 0
+
+    self.order.each do |item|
       item[:quantity].to_i.times do
         self.manage.delete_all_cookies
-        self.signup generate_user
+        self.user = generate_user(order_number)
+        self.signup self.user
         self.go_to_menu
         self.add_item(item[:name], 1, item[:custom])
 
-        if item[:price] < 5.01
+        if is_flag_on? "--custom_bundling"
+          wait_for_enter "What else do you want to get?" 
+        end
+
+        if item[:price] < 5.01 && is_flag_on?("--no_cheap") == false
           num_cheap_thing = ((5.01 - item[:price]) / cheapest_item[:price]).ceil
           add_item(cheapest_item[:name], num_cheap_thing)
         end
@@ -178,13 +197,15 @@ class LeapDriver < Selenium::WebDriver::Driver
         checkout_price_string = self.find_element(:css, 'div.r-padding:nth-child(2) > div:nth-child(1) > div:nth-child(2)').text
         checkout_price = checkout_price_string.gsub(/[^0-9\.]/, '').to_f
 
-        log "#{item[:name]}\t#{checkout_price.to_money}"
+        log "#{item[:name]}\t#{checkout_price.to_money}\t#{self.user[:first_name]} #{self.user[:last_name]}"
 
         self.total_price += checkout_price
 
         if is_flag_on? "--sleep"
           sleep rand(1..10)
         end
+
+        order_number += 1
       end
     end
 
@@ -207,8 +228,8 @@ class LeapDriver < Selenium::WebDriver::Driver
     else
       self.find_element(:id, 'payment_ccnumber').send_keys ENV['CC_NUMBER']
     end
-
-    self.find_element(:id, 'payment_nameoncard').send_keys ENV['CC_NAME']
+    
+    self.find_element(:id, 'payment_nameoncard').send_keys "#{self.user[:first_name]} #{self.user[:last_name]}"
 
     self.find_dropdown(:id, 'payment_cctype').select_by(:text, ENV['CC_TYPE'])
     self.find_dropdown(:id, 'payment_expdatem')
@@ -229,7 +250,7 @@ end
 
 f = LeapDriver.for :firefox
 
-if is_flag_on?("--dino-seed") || is_flag_on?("--dino")
+if is_flag_on?("--dino-seed")
   f.restaurant_url = 'https://www.leapset.com/order/restaurant/dinosaursmarket94114'
   f.go_to_menu
 
@@ -240,11 +261,20 @@ if is_flag_on?("--dino-seed") || is_flag_on?("--dino")
     f.add_item("pork and shrimp", 1, "")
   end
 else
-  f.navigate.to 'https://www.leapset.com/order/ca-san-francisco'
-  wait_for_enter 'Order what you want!'
-
-  f.restaurant_url = f.current_url
+  if is_flag_on?("--dino") || is_flag_on?("--oni")
+    if is_flag_on?("--dino")
+      f.restaurant_url = 'https://www.leapset.com/order/restaurant/dinosaursmarket94114'
+    elsif is_flag_on?("--oni")
+      f.restaurant_url = 'https://www.leapset.com/order/restaurant/lpOnigillySf'
+    end
+      
+    f.go_to_menu
+    wait_for_enter 'Order what you want!'
+  else
+    f.navigate.to 'https://www.leapset.com/order/ca-san-francisco'
+    wait_for_enter 'Order what you want!'
+    f.restaurant_url = f.current_url
+  end
 end
-
 
 f.order_items

@@ -24,8 +24,7 @@ if is_flag_on?("--help")
   exit
 end
 
-# $names = [%w{Oris Xia}, %w{Jennifer Kwok}, %w{Lucy Tang}, %w{Benjamin Summers}, %w{Kevin Wang}, %w{Colton Pierson}, %w{Gwen Grinsmead}].shuffle!
-$names = [%w{Aziz Pabani}, %w{Alex Crosson}, %w{Pratham Mittal}, %w{Zubin, Scharma}]
+$names = [%w{Eric Yoshida}, %w{Aziz Pabani}, %w{Alex Crosson}, %w{Pratham Mittal}, %w{Zubin Scharma}, %w{Oris Xia}, %w{Jennifer Kwok}, %w{Lucy Tang}, %w{Benjamin Summers}, %w{Kevin Wang}, %w{Colton Pierson}, %w{Gwen Grinsmead}]
 # $names.unshift %w{Zach Latta} if is_flag_on? "--zach"
 # $names.unshift %w{Jonathan Leung} if is_flag_on? "--jonathan"
 

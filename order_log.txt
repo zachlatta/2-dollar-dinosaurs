@@ -137,3 +137,20 @@ Monday, 11/17 11:38
 https://www.leapset.com/order/restaurant/lpOnigillySf
 Unagi	$0.62	Gwen Grinsmead
 Total: $0.62
+
+
+
+Tuesday, 11/18 20:59
+https://www.leapset.com/order/restaurant/dinosaursmarket94114
+Chicken and Shrimp	$1.25	Aziz Pabani
+Tofu and Taro	$1.25	Alex Crosson
+Meatball	$0.98	Pratham Mittal
+The Special	$1.41	Zubin Scharma
+Total: $4.89
+
+
+
+Tuesday, 11/18 21:02
+https://www.leapset.com/order/restaurant/dinosaursmarket94114
+Pork and Shrimp	$1.25	Eric Yoshida
+Total: $1.25

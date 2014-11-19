@@ -1,0 +1,10 @@
+Just change it so that
+
+./dinosarus -Jonathan_Leung -Aziz_Scharma -John_Zin -
+
+loop
+	Go to order page
+	=> User orders
+	Read the order and save it into orders
+	Reset cookies
+	if you say n, then it doesn't do it over again and then it puts in the order for all of the food

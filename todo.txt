@@ -8,3 +8,5 @@ loop
 	Read the order and save it into orders
 	Reset cookies
 	if you say n, then it doesn't do it over again and then it puts in the order for all of the food
+
+cat order_log.txt | grep \t | grep -v Total | grep -v https | grep -v Saturday | cut -f 2 | sed s/\\$//

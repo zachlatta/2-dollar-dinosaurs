@@ -5,34 +5,21 @@ require 'byebug'
 
 require_relative "helpers"
 require_relative "modded_selenium"
+require_relative "help"
+require_relative "leap_driver"
 
-if is_flag_on?("--help")
-  #===================================
-  # Example Usage:
-  puts "./dinosaurs_multi --debug # byepry instead of press enter and inserts fake credit card information"
-  puts "./dinosaurs_multi --no-confirm #you do not need to confirm an order, it just orders"
-  puts "./dinosuars_multi --dino # change to the dinosaurs page"
-  puts "./dinosuars_multi --oni # change to the dinosaurs page"
-  puts "./dinosaurs_multi --dino-seed # will add dinosaurs things to the menu"
-  puts "./dinosaurs_multi --random_sleep # will sleep for random intervals between signups"
-  puts "./dinosaurs_multi --custom # pauses after adding an item"
-  puts "./dinosaurs_multi --custom_bundling # pauses after adding an item so you can add more after it."
-  puts "./dinosaurs_multi --zach # makes adds zach to the front of the queue"
-  puts "./dinosaurs_multi --jonathan # makes adds zach to the front of the queue"
-  puts "./dinosaurs_multi --no-cheap # does not try to add cheap items"
-  puts "./dinosaurs_multi --manual # does not do automatic ordering"
-  exit
-end
+$names = [ { first_name: "Shreyans", last_name: "Bhansali", id: "602825" }, { first_name: "Andrew", last_name: "Kortina", id: "609848" }, { first_name: "Allan", last_name: "Zhang", id: "617367" }, { first_name: "Robert", last_name: "Do", id: "624444" }, { first_name: "Dan", last_name: "Lopez", id: "707400" }, { first_name: "Benjamin", last_name: "Gleitzman", id: "707525" }, { first_name: "Mattan", last_name: "Griffel", id: "836841" }, { first_name: "Zack", last_name: "Howitt", id: "10514925" }, { first_name: "Chris", last_name: "Alfano", id: "10517111" }, { first_name: "Arman", last_name: "Suleimenov", id: "12331353" }, { first_name: "Patrick", last_name: "Bradley", id: "12805352" }, { first_name: "Will", last_name: "Smith", id: "14400107" }, { first_name: "Harrison", last_name: "Powers", id: "14901746" }, { first_name: "John", last_name: "Britton", id: "17502619" }, { first_name: "Chris", last_name: "Tosswill", id: "24409597" }, { first_name: "Iris", last_name: "Yung", id: "500233168" }, { first_name: "Benjamin", last_name: "Shyong", id: "501118377" }, { first_name: "Jim", last_name: "Grandpre", id: "501880766" }, { first_name: "Connie", last_name: "Ho", id: "504411084" }, { first_name: "Zach", last_name: "W", id: "506183916" }, { first_name: "Rafe", last_name: "Kettler", id: "507700376" }, { first_name: "Matt", last_name: "Lukashovitz", id: "511742220" }, { first_name: "Alex", last_name: "Rattray", id: "515004220" }, { first_name: "Talia", last_name: "Goldberg", id: "515679021" }, { first_name: "Pratham", last_name: "Mittal", id: "516888906" }, { first_name: "Drew", last_name: "Inglis", id: "520715821" }, { first_name: "Bogumił", last_name: "Giertler", id: "522775340" }, { first_name: "Tony", last_name: "Diepenbrock IV", id: "528415896" }, { first_name: "Corey", last_name: "Loman", id: "552762672" }, { first_name: "Karan", last_name: "Hiremath", id: "557098814" }, { first_name: "Dan", last_name: "Trujillo", id: "563672645" }, { first_name: "David", last_name: "Xu", id: "565156571" }, { first_name: "Justin", last_name: "Meltzer", id: "567412775" }, { first_name: "Grace", last_name: "Wang", id: "578770136" }, { first_name: "Nick", last_name: "Meyer", id: "584858853" }, { first_name: "Gerry", last_name: "Song", id: "10152679246867152" }, { first_name: "Michelle", last_name: "Lu", id: "593686712" }, { first_name: "Wesley", last_name: "Magness", id: "594552296" }, { first_name: "Kathy", last_name: "Zhou", id: "596193199" }, { first_name: "Ryan", last_name: "Shea", id: "600197712" }, { first_name: "Sam", last_name: "Appelbaum", id: "600737679" }, { first_name: "Josh", last_name: "Oynick", id: "608595448" }, { first_name: "Vivian", last_name: "Huang", id: "611082564" }, { first_name: "Chase", last_name: "Lambert", id: "611086214" }, { first_name: "Gabriel", last_name: "Leung", id: "612356855" }, { first_name: "Lu", last_name: "Chen", id: "615475607" }, { first_name: "Jonathan", last_name: "Gottfried", id: "10151945098131612" }, { first_name: "Eddie", last_name: "Cohen", id: "616835662" }, { first_name: "Dave", last_name: "Fontenot", id: "629564354" }, { first_name: "Alex", last_name: "Brashear", id: "630240097" }, { first_name: "Brad", last_name: "Oyler", id: "636428361" }, { first_name: "Emily", last_name: "Zhang", id: "641818107" }, { first_name: "Jinyan", last_name: "Cao", id: "649893890" }, { first_name: "Patrick", last_name: "Yoon", id: "653499437" }, { first_name: "Adi", last_name: "Dahiya", id: "658783924" }, { first_name: "Clara", last_name: "Wu", id: "673965129" }, { first_name: "Natasha", last_name: "Green", id: "676271809" }, { first_name: "David", last_name: "Mally", id: "677646022" }, { first_name: "Fitz", last_name: "Tepper", id: "681131694" }, { first_name: "Stefan", last_name: "Zhelyazkov", id: "693468495" }, { first_name: "Robbie", last_name: "Glynn", id: "697908303" }, { first_name: "Nate", last_name: "Close", id: "699029923" }, { first_name: "Shaanan", last_name: "Cohney", id: "732100026" }, { first_name: "Rigel", last_name: "Swavely", id: "749659041" }, { first_name: "Megha", last_name: "Agrawal", id: "771109605" }, { first_name: "Henry", last_name: "You", id: "771870216" }, { first_name: "Edward", last_name: "Lando", id: "774132958" }, { first_name: "Jared", last_name: "Katz", id: "10154019618140567" }, { first_name: "Alex", last_name: "Hint", id: "806667714" }, { first_name: "Abhishek", last_name: "Gadiraju", id: "816607231" }, { first_name: "Dan", last_name: "Mundy", id: "816980152" }, { first_name: "Sanjay", last_name: "Paul", id: "849060454" }, { first_name: "Michael", last_name: "Rivera", id: "854635012" }, { first_name: "Vincent", last_name: "Sanchez-Gomez", id: "1020540034" }, { first_name: "Brett", last_name: "van Zuiden", id: "1045260346" }, { first_name: "Jeffrey", last_name: "Shih", id: "1063080089" }, { first_name: "Jason", last_name: "Mow", id: "1063440122" }, { first_name: "Raghav", last_name: "Sood", id: "10202495425361657" }, { first_name: "Alon", last_name: "Lavi", id: "1127758094" }, { first_name: "Rob", last_name: "Cheung", id: "1144860053" }, { first_name: "Charlie", last_name: "Guo", id: "1155960123" }, { first_name: "Connie", last_name: "Wu", id: "1166670013" }, { first_name: "Max", last_name: "Guo", id: "1193293898" }, { first_name: "Fred", last_name: "Wang", id: "1211430224" }, { first_name: "Maarten", last_name: "Sap", id: "1211565515" }, { first_name: "Charles", last_name: "Kong", id: "1227960757" }, { first_name: "Vivek", last_name: "Panyam", id: "1232570401" }, { first_name: "Andrew", last_name: "Pilling", id: "1239916805" }, { first_name: "Troy", last_name: "Shu", id: "1241641191" }, { first_name: "Kent", last_name: "Chen", id: "1248270527" }, { first_name: "Ceasar", last_name: "Bautista", id: "1251778234" }, { first_name: "Kai", last_name: "Peng", id: "1264560303" }, { first_name: "Vaishak", last_name: "Kumar", id: "1272513902" }, { first_name: "Bob", last_name: "Han", id: "1293810879" }, { first_name: "Josh", last_name: "Wilson", id: "1307190045" }, { first_name: "Ana", last_name: "Giraldo-Wingler", id: "1328910065" }, { first_name: "Mike", last_name: "Swift", id: "1335540112" }, { first_name: "Lauren", last_name: "Frazier", id: "1338060026" }, { first_name: "Casey", last_name: "Rosengren", id: "1341660139" }, { first_name: "Dan", last_name: "Shipper", id: "1341720286" }, { first_name: "Peter", last_name: "Lai", id: "1342020074" }, { first_name: "Daryl", last_name: "Sew", id: "1343422061" }, { first_name: "Andrew", last_name: "Braunstein", id: "1370220343" }, { first_name: "Dan", last_name: "G", id: "1380330258" }, { first_name: "Cat", last_name: "Hu", id: "1381200269" }, { first_name: "Bowen", last_name: "Lu", id: "1383386426" }, { first_name: "Boris", last_name: "Treskunov", id: "1385869975" }, { first_name: "Sahil", last_name: "Shah", id: "1459756976" }, { first_name: "Scottie", last_name: "Biddle", id: "1467390672" }, { first_name: "Christopher", last_name: "Elwell", id: "1474320545" }, { first_name: "John", last_name: "Pernock", id: "1479510082" }, { first_name: "Sophia", last_name: "Coll", id: "1515180034" }, { first_name: "Pulak", last_name: "Mittal", id: "1532250196" }, { first_name: "Wesley", last_name: "Zhao", id: "1576770095" }, { first_name: "Ian", last_name: "Sibner", id: "1646527048" }, { first_name: "Steve", last_name: "Krouse", id: "1671105582" }, { first_name: "Geoffrey", last_name: "Vedernikoff", id: "1725380113" }, { first_name: "Zain", last_name: "Shah", id: "1803994492" }, { first_name: "Daniel", last_name: "Ge", id: "1813549154" }, { first_name: "Ishaan", last_name: "Gulrajani", id: "100000246825182" }, { first_name: "Gaby", last_name: "Moreno", id: "100000352770318" }, { first_name: "Arpita", last_name: "Biswas", id: "100001114304196" }, { first_name: "Tanvir", last_name: "Ahmed", id: "100001577607497" }, { first_name: "Victor", last_name: "Lourng", id: "100001604500510" }, { first_name: "Saskia", last_name: "Vola", id: "100002045807932" }, { first_name: "Zach", last_name: "Latta", id: "100003061461786" }, { first_name: "Jennifer", last_name: "Rubinovitz", id: "100003355165026" } ].shuffle(random: Random.new(Time.new.to_i))
 
-$names = [%w{Eric Yoshida}, %w{Aziz Pabani}, %w{Alex Crosson}, %w{Pratham Mittal}, %w{Zubin Scharma}, %w{Oris Xia}, %w{Jennifer Kwok}, %w{Lucy Tang}, %w{Benjamin Summers}, %w{Kevin Wang}, %w{Colton Pierson}, %w{Gwen Grinsmead}]
-# $names.unshift %w{Zach Latta} if is_flag_on? "--zach"
-# $names.unshift %w{Jonathan Leung} if is_flag_on? "--jonathan"
+$names.unshift [ {first_name: "Zach", last_name: "Latta"} ] if is_flag_on?("--zach")
+$names.unshift [ {first_name: "Jonathan", last_name: "Leung"} ] if is_flag_on?("--jonathan")
+$names.unshift [ {first_name: "Lucy", last_name: "Tang"} ] if is_flag_on?("--lucy")
+$names.unshift [ {first_name: "Maddy", last_name: "Maxey"} ] if is_flag_on?("--maddy")
 
 def generate_user(i=0)
   Faker::Config.locale = 'en-US'
   {
-    first_name: $names[i][0],
-    last_name: $names[i][1],
+    first_name: $names[i][:first_name],
+    last_name: $names[i][:last_name],
     email: "naruto137+dinosaurs+#{Faker::Number.number(10)}@gmail.com",
     phone: {
       npa: Faker::PhoneNumber.area_code,
@@ -41,210 +28,6 @@ def generate_user(i=0)
     },
     password: 'foobarfoobar1'
   }
-end
-
-class LeapDriver < Selenium::WebDriver::Driver
-  attr_accessor :user, :order, :ordered, :restaurant_url, :total_price
-
-  def go_to_menu
-    self.navigate.to self.restaurant_url
-  end
-
-  def signup(user)
-    self.navigate.to 'https://www.leapset.com/order/profile/create'
-
-    # create account
-    self.find_element(:id, 'account_email').send_keys user[:email]
-    self.find_element(:id, 'account_phone1').send_keys user[:phone][:npa]
-    self.find_element(:id, 'account_phone2').send_keys user[:phone][:co]
-    self.find_element(:id, 'account_phone3').send_keys user[:phone][:line]
-    self.find_element(:id, 'account_pwd').send_keys user[:password]
-    self.find_element(:id, 'account_confirm_pwd').send_keys user[:password]
-    self.find_element(:css, '.creat-acc').click
-
-    self.wait_until_visible(:id, 'custinfo_first_name')
-
-    # set user's name
-    self.find_element(:id, 'custinfo_first_name').send_keys user[:first_name]
-    self.find_element(:id, 'custinfo_last_name').send_keys user[:last_name]
-    self.find_element(:id, 'id_link_save_changes').click
-  end
-
-  def find_item(item)
-    self.wait_until_visible(:class, "meal-menu-des")
-    self.find_elements(:class, 'meal-menu-des').find { |el|
-      el.text.downcase.include? item.downcase
-    }
-  end
-
-  def get_price(name)
-    item = find_item(name)
-    price_string = item.find_element(:xpath, "../div[@class='meal-menu-price']").text
-    price_string.gsub('$', '').to_f
-  end
-
-  def find_cheapest_item
-    item_prices = self.find_elements(:class, 'meal-menu-price').map { |el|
-      price = el.text.gsub('$', '').to_f
-      name = el.find_element(:xpath, "../div[@class='meal-menu-des']").text
-      {name: name, price: price}
-    }
-    item_prices.reject! { |item| item[:price] == 0.00 }
-    item_prices.min_by { |item| item[:price] }
-  end
-
-  def add_item(item, quantity, custom_instructions='')
-    order_el = find_item(item)
-    order_el.click
-
-    # wait for modal to pop up
-    
-    self.wait_until_visible(:class, 'cust-txt-tp-1')
-
-    # enter special instructions and add to cart!
-    quantity_input = self.find_element(:id, 'id_add_item_dlg_quantity')
-    quantity_input.clear
-    quantity_input.send_keys(quantity)
-
-    self.find_element(:class, 'cust-txt-tp-1').send_keys custom_instructions
-
-    if is_flag_on? "--custom"
-      wait_for_enter 'Please choose your preferences and click the button to add'
-
-    else
-      self.find_element(:class, 'add-item').click
-
-      begin
-        wait_until_invisible(:class, 'add-item')
-      rescue
-        wait_for_enter 'Please choose your preferences and click the button to add'
-      end
-    end
-    
-  end
-
-  def read_items
-    order = []
-
-    num_rows = self.find_elements(:class, 'row-main-product').length
-
-    num_rows.times do |i|
-      row = self.find_elements(:class, 'row-main-product')[i]
-      cols = row.find_elements(:css, 'td')
-
-
-      next_row_els = row.find_elements(:xpath, 'following-sibling::tr')
-
-      custom = ""
-      if next_row_els.empty?
-        # there is no custom instrutions
-      else
-        next_row_el = next_row_els.first
-        next_row_class = next_row_el.attribute("class")
-    
-        if next_row_class == "row-main-product-attrib"
-          custom = next_row_el.text
-        end
-      end
-
-      name = cols[1].text
-
-      item = {
-        quantity: cols[0].text,
-        name: name,
-        price: get_price(name),
-        custom: custom
-      }
-
-      order << item
-    end
-
-    return order
-  end
-
-  def order_items
-    self.total_price = 0
-    cheapest_item = find_cheapest_item
-
-    self.order = self.read_items
-
-    3.times { log "" }
-    log(Time.now.strftime('%A, %m/%d %H:%M'))
-    log(self.restaurant_url)
-
-    order_number = 0
-
-    self.order.each do |item|
-      item[:quantity].to_i.times do
-        self.manage.delete_all_cookies
-        self.user = generate_user(order_number)
-        self.signup self.user
-        self.go_to_menu
-        self.add_item(item[:name], 1, item[:custom])
-
-        if is_flag_on? "--custom_bundling"
-          wait_for_enter "What else do you want to get?" 
-        end
-
-        if item[:price] < 5.01 && is_flag_on?("--no_cheap") == false
-          num_cheap_thing = ((5.01 - item[:price]) / cheapest_item[:price]).ceil
-          add_item(cheapest_item[:name], num_cheap_thing)
-        end
-
-        self.checkout
-
-        checkout_price_string = self.find_element(:css, 'div.r-padding:nth-child(2) > div:nth-child(1) > div:nth-child(2)').text
-        checkout_price = checkout_price_string.gsub(/[^0-9\.]/, '').to_f
-
-        log "#{item[:name]}\t#{checkout_price.to_money}\t#{self.user[:first_name]} #{self.user[:last_name]}"
-
-        self.total_price += checkout_price
-
-        if is_flag_on? "--sleep"
-          sleep rand(1..10)
-        end
-
-        order_number += 1
-      end
-    end
-
-    log "Total: #{self.total_price.to_money}"
-    read_log
-  end
-
-  def checkout
-    self.wait_until_visible(:xpath, "//*[@id='id_shopping_cart_checkout_form']/ul/li[3]/input")
-
-    # checkout
-    self.find_element(:xpath, "//*[@id='id_shopping_cart_checkout_form']/ul/li[3]/input").click
-    self.find_element(:id, 'pickup_discount_code').send_keys '5OFF'
-
-    self.find_element(:xpath, "//*[@id='id_pickup_form']/div[8]/div/div/div[2]/a").click
-
-    # billing info
-    if is_flag_on?("--debug")
-      self.find_element(:id, 'payment_ccnumber').send_keys "1234567890"
-    else
-      self.find_element(:id, 'payment_ccnumber').send_keys ENV['CC_NUMBER']
-    end
-    
-    self.find_element(:id, 'payment_nameoncard').send_keys "#{self.user[:first_name]} #{self.user[:last_name]}"
-
-    self.find_dropdown(:id, 'payment_cctype').select_by(:text, ENV['CC_TYPE'])
-    self.find_dropdown(:id, 'payment_expdatem')
-      .select_by(:text, ENV['CC_EXP_MONTH'])
-    self.find_dropdown(:id, 'payment_expdatey')
-      .select_by(:text, ENV['CC_EXP_YEAR'])
-    self.find_element(:id, 'payment_cvvcode').send_keys ENV['CC_CVV']
-
-    if is_flag_on? "--no-confirm"
-      # do not confirm
-    else
-      wait_for_enter 'Please confirm your order. Exit the program to cancel the order'
-    end
-
-    self.find_element(:class, 'submit-order-buttn').click
-  end
 end
 
 f = LeapDriver.for :firefox

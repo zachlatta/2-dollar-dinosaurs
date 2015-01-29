@@ -39,4 +39,4 @@ build/
 
 .env
 
-/order_log.txt
+order_log.txt

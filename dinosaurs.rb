@@ -2,6 +2,8 @@
 
 require 'faker'
 require 'byebug'
+require 'firebase'
+
 
 require_relative "helpers"
 require_relative "modded_selenium"
@@ -16,22 +18,45 @@ $names.unshift [ {first_name: "Jonathan", last_name: "Leung"} ] if is_flag_on?("
 $names.unshift [ {first_name: "Lucy", last_name: "Tang"} ] if is_flag_on?("--lucy")
 $names.unshift [ {first_name: "Maddy", last_name: "Maxey"} ] if is_flag_on?("--maddy")
 
+PASSWORD = "foobarfoobar1"
+Faker::Config.locale = 'en-US'
+
+f = LeapDriver.for :firefox
+
+response = $firebase.get("twilio-allocated-emails")
+twilio_allocated_emails = response.body
+
+unless twilio_allocated_emails.nil?
+  twilio_allocated_emails.each do |key, email|
+    f.login(email, PASSWORD)
+    f.update_phone(Faker::PhoneNumber.area_code, Faker::PhoneNumber.exchange_code, Faker::PhoneNumber.subscriber_number)
+    f.logout
+    $firebase.delete("twilio-allocated-emails/"+key)
+  end
+end
+
+$phone_numbers = [
+  {x: 501, y: 205, z: 1856},
+  {x: 570, y: 660, z: 3216},
+  {x: 361, y: 580, z: 5153},
+  {x: 937, y: 407, z: 4711}
+]
+
 def generate_user(i=0)
-  Faker::Config.locale = 'en-US'
+  phone_number = $phone_numbers[i]
   {
     first_name: $names[i][:first_name],
     last_name: $names[i][:last_name],
-    email: "naruto137+dinosaurs+#{Faker::Number.number(10)}@gmail.com",
+    email: "#{ENV['EMAIL_FRONT']}+dinosaurs+#{Faker::Number.number(10)}@#{ENV['EMAIL_BACK']}",
     phone: {
-      npa: Faker::PhoneNumber.area_code,
-      co: Faker::PhoneNumber.exchange_code,
-      line: Faker::PhoneNumber.subscriber_number
+      npa: phone_number[:x],
+      co: phone_number[:y],
+      line: phone_number[:z]
     },
-    password: 'foobarfoobar1'
+    password: PASSWORD
   }
 end
 
-f = LeapDriver.for :firefox
 
 if is_flag_on?("--dino-seed")
   f.restaurant_url = 'https://www.leapset.com/order/restaurant/dinosaursmarket94114'

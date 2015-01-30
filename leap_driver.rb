@@ -5,17 +5,48 @@ class LeapDriver < Selenium::WebDriver::Driver
     self.navigate.to self.restaurant_url
   end
 
+  def login(email, password)
+    self.navigate.to 'https://www.leapset.com/order/login'
+    self.find_element(:id, 'signin_email').send_keys email
+    self.find_element(:id, 'signin_pwd').send_keys password
+    self.find_element(:class, 'signin-buttn').click
+  end
+
+  def logout
+    self.navigate.to 'https://www.leapset.com/order/logout'
+  end
+
+  def update_phone(x, y, z)
+    self.navigate.to 'https://www.leapset.com/order/profile'
+
+    self.find_element(:id, 'custinfo_phone1').clear
+    self.find_element(:id, 'custinfo_phone2').clear
+    self.find_element(:id, 'custinfo_phone3').clear
+
+    self.find_element(:id, 'custinfo_phone1').send_keys x
+    self.find_element(:id, 'custinfo_phone2').send_keys y
+    self.find_element(:id, 'custinfo_phone3').send_keys z
+    
+    self.find_element(:id, 'id_link_save_changes').click
+  end
+
   def signup(user)
     self.navigate.to 'https://www.leapset.com/order/profile/create'
 
     # create account
     self.find_element(:id, 'account_email').send_keys user[:email]
+    $firebase.push("twilio-allocated-emails", user[:email])
+
     self.find_element(:id, 'account_phone1').send_keys user[:phone][:npa]
     self.find_element(:id, 'account_phone2').send_keys user[:phone][:co]
     self.find_element(:id, 'account_phone3').send_keys user[:phone][:line]
     self.find_element(:id, 'account_pwd').send_keys user[:password]
     self.find_element(:id, 'account_confirm_pwd').send_keys user[:password]
     self.find_element(:css, '.creat-acc').click
+
+    log("using email: " + user[:email])
+    log("using phone: " + "#{user[:phone][:npa]}-#{user[:phone][:co]}-#{user[:phone][:line]}")
+
 
     self.wait_until_visible(:id, 'custinfo_first_name')
 
@@ -126,6 +157,7 @@ class LeapDriver < Selenium::WebDriver::Driver
     3.times { log "" }
     log(Time.now.strftime('%A, %m/%d %H:%M'))
     log(self.restaurant_url)
+    sentence = "Hi! So I already placed and paid for a to-go order here for "
 
     order_number = 0
 
@@ -133,6 +165,9 @@ class LeapDriver < Selenium::WebDriver::Driver
       item[:quantity].to_i.times do
         self.manage.delete_all_cookies
         self.user = generate_user(order_number)
+
+
+
         self.signup self.user
         self.go_to_menu
         self.add_item(item[:name], 1, item[:custom])
@@ -152,6 +187,7 @@ class LeapDriver < Selenium::WebDriver::Driver
         checkout_price = checkout_price_string.gsub(/[^0-9\.]/, '').to_f
 
         log "#{item[:name]}\t#{checkout_price.to_money}\t#{self.user[:first_name]} #{self.user[:last_name]}"
+        sentence << "#{self.user[:first_name]} #{self.user[:last_name]}, "
 
         self.total_price += checkout_price
 
@@ -161,9 +197,16 @@ class LeapDriver < Selenium::WebDriver::Driver
 
         order_number += 1
       end
+
     end
 
+    sentence << ". Thanks so much for helping me to pick up my delivery!"
+
+
     log "Total: #{self.total_price.to_money}"
+    log "\n"
+    log sentence
+    log "\n"
     read_log
   end
 

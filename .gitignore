@@ -38,3 +38,5 @@ build/
 .rvmrc
 
 .env
+
+order_log.txt

@@ -9,3 +9,7 @@ export CC_CVV='XXXX'
 export EMAIL_FRONT='EMAIL_ADDRESS'
 export EMAIL_BACK='gmail.com'
 ```
+
+This is where our firebase repo is
+
+`https://dinosaurs-firebase.firebaseio.com/`

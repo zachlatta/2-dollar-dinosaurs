@@ -36,10 +36,9 @@ unless twilio_allocated_emails.nil?
 end
 
 $phone_numbers = [
-  {x: 501, y: 205, z: 1856},
-  {x: 570, y: 660, z: 3216},
-  {x: 361, y: 580, z: 5153},
-  {x: 937, y: 407, z: 4711}
+  {x: 415, y: 212, z: 9917},
+  {x: 650, y: 681, z: 4156},
+  {x: 650, y: 458, z: 5123}
 ]
 
 def generate_user(i=0)

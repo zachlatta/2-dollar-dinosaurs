@@ -1,3 +1,6 @@
+#2-dollar-dinosaurs
+<img src="https://raw.githubusercontent.com/hackedu/dinosaurs/master/restaurant_dinosaur.png" width="50%">
+
 You need to export the following before using the script:
 
 ```

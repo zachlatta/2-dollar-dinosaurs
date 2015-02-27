@@ -36,10 +36,9 @@ unless twilio_allocated_emails.nil?
 end
 
 $phone_numbers = [
-  {x: 501, y: 205, z: 1856},
-  {x: 570, y: 660, z: 3216},
-  {x: 361, y: 580, z: 5153},
-  {x: 937, y: 407, z: 4711}
+  {x: 650, y: 458, z: 5123},
+  {x: 650, y: 681, z: 4156},
+  {x: 415, y: 323, z: 9917}
 ]
 
 def generate_user(i=0)
@@ -47,7 +46,7 @@ def generate_user(i=0)
   {
     first_name: $names[i][:first_name],
     last_name: $names[i][:last_name],
-    email: "#{ENV['EMAIL_FRONT']}+dinosaurs+#{Faker::Number.number(10)}@#{ENV['EMAIL_BACK']}",
+    email: "#{ENV['EMAIL_FRONT']}+#{Faker::Number.number(10)}@#{ENV['EMAIL_BACK']}",
     phone: {
       npa: phone_number[:x],
       co: phone_number[:y],

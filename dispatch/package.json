@@ -21,9 +21,12 @@
     "connect-pg-simple": "^2.3.0",
     "express": "^4.12.2",
     "express-session": "^1.10.3",
+    "faker": "^2.1.2",
     "knex": "^0.7.6",
     "lodash": "^3.5.0",
     "morgan": "^1.5.1",
-    "pg": "^4.3.0"
+    "pg": "^4.3.0",
+    "phone-formatter": "0.0.2",
+    "superagent": "^1.1.0"
   }
 }

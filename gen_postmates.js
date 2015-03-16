@@ -104,7 +104,7 @@ function createCustomer(cb) {
 			data: { //just pseudo for now
 				last_lat: 37.782218,
 				last_lng: -122.410317,
-				device_id: '8e9147a437012db74c7ab5897a563c8a' 
+				device_id: crypto.randomBytes(16).toString('hex')
 			},
 			path: 'v1/login_customer'
 		}, function(err, data) {

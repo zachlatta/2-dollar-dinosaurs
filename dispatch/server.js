@@ -38,7 +38,12 @@ var server = app.listen(app.get('port'), function () {
     app.get('env')
   );
 
-  app.get('/', function(req, res) {
+  // shim'd api
+  app.get('/api/locations', function(req, res) {
+    return res.json([]);
+  });
+
+  app.get('/*', function(req, res) {
     res.render('index');
   });
 });

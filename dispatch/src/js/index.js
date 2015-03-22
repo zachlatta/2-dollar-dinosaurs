@@ -1,13 +1,13 @@
 /** @jsx React.DOM */
 var React = require('react');
-var requireStylesheet = require('stylesheets').requireStylesheet;
 
-requireStylesheet(process.env.STATIC_ROOT + 'MyComponent.css');
-
-var MyComponent = React.createClass({
+var TestApp = React.createClass({
   render: function() {
-    return <span className="MyComponent">Hello, MyComponent!</span>;
+    return <h1>Testing</h1>;
   }
 });
 
-module.exports = MyComponent;
+
+console.log('asda'); 
+
+React.render(<TestApp/>, document.getElementById('root'));

@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "jsxc src/js/ src/js/dist"
+    "build": "jsx src/js src/dist && browserify src/dist/index.js -o src/dist/bundle.js"
   },
   "repository": {
     "type": "git",

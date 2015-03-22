@@ -33,4 +33,4 @@ node_modules
 
 .env
 
-src/js/dist
+src/dist

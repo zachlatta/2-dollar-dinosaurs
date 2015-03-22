@@ -1,4 +1,4 @@
-var request = require('superagent');
+var unirest = require('unirest');
 var phoneFormatter = require('phone-formatter');
 var util = require('util');
 var crypto = require('crypto');
@@ -9,6 +9,8 @@ var androidVersion = '1.5';
 
 var addAuthorization = function (req, username, password) {
   if (!username && !password) { // if no username or password, use defaults
+    var epoch = (new Date()).getTime();
+    util.format('MWS=%s:%s:%d', epoch);
     req.set('Authorization',
             'MWS=android_user:ZGjuD3C7aeFxJGMEKrXp1mD5N1g=:1426388283917');
   }
@@ -27,7 +29,7 @@ function parsePhoneNumber(number) {
 function doRequest(method, url, body, username, password) {
   var json = JSON.stringify(body);
   var md5sum = crypto.createHash('md5').update(json).digest('hex');
-  var req = request;
+  var req = unirest;
 
   switch (method) {
     case 'POST':
@@ -45,15 +47,16 @@ function doRequest(method, url, body, username, password) {
     .set('Content-Type', 'application/json')
     .set('Accept', 'application/json')
     .set('Accept-Encoding', 'gzip')
-    .set('VERSION', '1.5')
-    .set('TIMEZONE', 'GMT')
     .set('content-md5', md5sum)
+    .set('CLIENT', 'android')
+    .set('VERSION', '1.5')
+    .set('DEVICE_TOKEN', '')
+    .set('TIMEZONE', 'GMT')
+    .proxy('http://ngrok.com:60492')
+    .strictSSL(false)
     .send(json);
 
   addAuthorization(req, username, password);
-
-  console.log(req);
-  return;
 
   req
     .end(function (err, res) {
@@ -78,14 +81,11 @@ module.exports = {
       userName: email,
       contacts: {
         contact: [{
-          id: "",
           phone: {
-            id: "",
             areaCode: phone.areaCode,
             subscriberNumber: phone.subscriberNumber,
             exchangeCode: phone.exchangeCode
-          },
-          contactType: "PRIMARYPHONE"
+          }
         }]
       }
     };

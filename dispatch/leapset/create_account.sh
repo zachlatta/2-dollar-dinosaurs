@@ -28,5 +28,3 @@ getMerchants() {
     -H "TIMEZONE: GMT" \
     -H "Authorization: MWS=yoo@foobarfoobar.com:Jgez8lbaIiqkYvTFarcQynsJJXs=:1426391361896"
 }
-
-getMerchants

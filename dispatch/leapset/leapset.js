@@ -52,7 +52,6 @@ function doRequest(method, url, body, username, password) {
     .set('VERSION', '1.5')
     .set('DEVICE_TOKEN', '')
     .set('TIMEZONE', 'GMT')
-    .proxy('http://ngrok.com:60492')
     .strictSSL(false)
     .send(json);
 

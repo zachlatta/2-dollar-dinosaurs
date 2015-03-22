@@ -38,4 +38,8 @@ var server = app.listen(app.get('port'), function () {
     server.address().port,
     app.get('env')
   );
+
+  app.get('/', function(req, res) {
+    res.send('asda');
+  });
 });

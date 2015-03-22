@@ -53,7 +53,7 @@ var server = app.listen(app.get('port'), function () {
     leapset.getMerchant('jfrost@cold.com', 'foobarfoobar1', req.params.location_id, {
       includeImages: true
     }).then(function(data) {
-      res.json(data.body);
+      res.json(data);
     });
   });
 

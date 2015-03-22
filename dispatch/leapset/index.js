@@ -48,10 +48,10 @@ function authorizationHeader(username, password, method, contentMD5,
 }
 
 function doRequest(method, reqURL, body, username, password) {
-  var deferred = Q.defer(),
-      json = JSON.stringify(body),
-      md5sum = crypto.createHash('md5').update(json).digest('hex'),
-      req = unirest;
+  var deferred = Q.defer();
+  var json = JSON.stringify(body);
+  var md5sum = crypto.createHash('md5').update(json).digest('hex');
+  var req = unirest;
 
   switch (method) {
     case 'POST':
@@ -85,7 +85,7 @@ function doRequest(method, reqURL, body, username, password) {
     .strictSSL(false)
     .send(json)
     .end(function (res) {
-      deferred.resolve(res);
+      deferred.resolve(res.body);
     });
 
   return deferred.promise;
@@ -136,4 +136,12 @@ module.exports = {
     return doRequest('GET', buildURL('/merchant/'+merchantSlug, query), null,
                      username, password);
   },
+
+  getCatalog: function (username, password, merchantSlug, menuID, query) {
+    return doRequest('GET',
+                     buildURL('/catalog/'+merchantSlug+'/'+menuID, query),
+                     null,
+                     username,
+                     password);
+  }
 };

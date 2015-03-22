@@ -83,18 +83,12 @@ function doRequest(method, reqURL, body, username, password) {
     .set('TIMEZONE', 'GMT')
     .set('Authorization', auth)
     .strictSSL(false)
-    .send(json);
-
-  req
-    .end(function (err, res) {
-      if (err) {
-        deferred.reject(err);
-        return;
-      }
-      deferred.resolve(res);
+    .send(json)
+    .end(function (res) {
+      deferred.resolve(res.body);
     });
 
-  return deferred;
+  return deferred.promise;
 }
 
 function buildURL(endpoint, query) {

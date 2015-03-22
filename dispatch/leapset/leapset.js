@@ -1,8 +1,9 @@
-var unirest = require('unirest');
+var crypto = require('crypto');
 var phoneFormatter = require('phone-formatter');
+var unirest = require('unirest');
 var util = require('util');
 var url = require('url');
-var crypto = require('crypto');
+var Q = require('q');
 
 var defaultUser = 'android_user';
 var defaultPassHash = 'j6xeqKf2xcCWobkQz2oERJf2ABc=';
@@ -32,7 +33,6 @@ function authToken(username, password, method, contentMD5, epoch, relativeURL) {
 
   var toHash = util.format("%s\n%s\napplication/json\n%d\n%s", method,
                            contentMD5, epoch, relativeURL);
-  console.log(toHash);
   var signature = crypto
                     .createHmac('sha1', passHash)
                     .update(toHash)
@@ -48,6 +48,7 @@ function authorizationHeader(username, password, method, contentMD5,
 }
 
 function doRequest(method, reqURL, body, username, password) {
+  var deferred = Q.defer();
   var json = JSON.stringify(body);
   var md5sum = crypto.createHash('md5').update(json).digest('hex');
   var req = unirest;
@@ -59,6 +60,9 @@ function doRequest(method, reqURL, body, username, password) {
     case 'PUT':
       req = req.put(reqURL);
       break;
+    case 'GET':
+      req = req.get(reqURL);
+      break;
     default:
       console.error('%s is not a valid request method', method);
   }
@@ -66,7 +70,6 @@ function doRequest(method, reqURL, body, username, password) {
   var parsedURL = url.parse(reqURL);
 
   var auth = authorizationHeader(username, password, method, md5sum, parsedURL.pathname);
-  console.log(auth);
 
   req = req
     .set('User-Agent', 'Android-Consumer-Application')
@@ -85,10 +88,22 @@ function doRequest(method, reqURL, body, username, password) {
   req
     .end(function (err, res) {
       if (err) {
-        console.log('Error making request: ', err.body);
+        deferred.reject(err);
+        return;
       }
-      console.log(res.body);
+      deferred.resolve(res);
     });
+
+  return deferred;
+}
+
+function buildURL(endpoint, query) {
+  var u = new url.Url();
+  u.protocol = 'https';
+  u.hostname = 'api1.leapset.com';
+  u.pathname = '/api-v2/service' + endpoint;
+  u.query = query;
+  return url.format(u);
 }
 
 module.exports = {
@@ -114,13 +129,17 @@ module.exports = {
       }
     };
 
-    doRequest('PUT', 'https://api1.leapset.com/api-v2/service/customer', body,
-              defaultUser, defaultPassHash);
+    return doRequest('PUT', buildURL('/customer'), body, defaultUser,
+                     defaultPassHash);
+  }, 
+
+  getMerchants: function (username, password, query) {
+    return doRequest('GET', buildURL('/search/merchants', query), null,
+                     username, password);
   },
 
-  getMerchants: function () {
+  getMerchant: function (username, password, merchantSlug, query) {
+    return doRequest('GET', buildURL('/merchant/'+merchantSlug, query), null,
+                     username, password);
   },
-
-  authToken: authToken,
-  authorizationHeader: authorizationHeader
 };

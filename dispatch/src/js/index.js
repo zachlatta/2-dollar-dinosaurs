@@ -146,7 +146,8 @@ var MenuPage = React.createClass({
 		return {
 			loading: true,
 			location: null,
-			menu: null
+			menu: null,
+			cart: []
 		};
 	},
 	componentDidMount: function() {
@@ -170,11 +171,35 @@ var MenuPage = React.createClass({
 			<div className="menu">
 				<h2>{this.state.location.name}</h2>
 				<div className="row">
-					<div className="col-md-8">ads</div>
-					<div className="col-md-4">asda</div>
+					<div className="col-md-8">
+						<table class="table" width="100%">
+							<thead>
+								<tr>
+									<th>Name</th> <th>Price</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div className="col-md-4">
+					<h3>Cart:</h3>
 				</div>
 			</div>
 		);
+	}
+});
+
+var MenuItem = React.createClass({
+	getInitialState: function() {
+		return {
+			name: "test",
+			price: 3.0
+		};
+	},
+	render: function() {
+		return <tr><td>{this.state.name}</td><td>{this.state.price - 5}</td></tr>;
 	}
 });
 

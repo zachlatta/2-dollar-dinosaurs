@@ -18,17 +18,16 @@ var knex = require('knex')({
 
 // Express configuration
 app.set('port', process.env.PORT || 3000);
+app.use('/statics', express.static(__dirname + '/src'));
+app.engine('html', require('swig').renderFile);
+
+app.set('view engine', 'html');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(session({
   resave: true,
   saveUninitialized: true,
-  secret: secrets.sessionSecret,
-  store: new PostgresStore({
-    pg: pg,
-    conString: secrets.databaseURL,
-    tableName: 'session'
-  })
+  secret: secrets.sessionSecret
 }));
 
 var server = app.listen(app.get('port'), function () {
@@ -40,6 +39,6 @@ var server = app.listen(app.get('port'), function () {
   );
 
   app.get('/', function(req, res) {
-    res.send('asda');
+    res.render('index');
   });
 });

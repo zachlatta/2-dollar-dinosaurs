@@ -153,7 +153,7 @@ var MenuPage = React.createClass({
 	componentDidMount: function() {
 		var self = this,
 				loc_id = this.context.router.getCurrentParams().location_id;
-		DS.get('locations/' + loc_id, function(loc) {
+		$.get('/api/locations/' + loc_id, function(loc) {
 			DS.get('menus/' + loc_id, function(menu) {
 				self.setState({
 					loading: false,
@@ -163,43 +163,62 @@ var MenuPage = React.createClass({
 			});
 		});
 	},
+	handleClick: function() {
+		alert('a');
+		this.setState({
+			cart: this.state.list.concat([{
+				newitem: 'somefield'
+			}])
+		})
+	},
 	render: function() {
 		if(this.state.loading) {
 			return <div>Loading...</div>;
 		}
+		var menuitems = [],
+				self = this;
+		_.each(this.state.menu, function(category) {
+			menuitems.push(<tr><th className="colspan2"><u>{category.name}</u></th></tr>);
+			if(category.products) {
+				_.each(category.products.product, function(product) {
+					menuitems.push(<tr><td>{product.name}</td><td>${product.price - 5}</td></tr>);
+				});
+			}
+			_.each(category.subCategories.category, function(subcategory) {
+				menuitems.push(<tr><th className="colspan2"><i>{category.name}</i></th></tr>);
+				_.each(subcategory.products.product, function(product) {
+					menuitems.push(<tr><td>{product.name}</td><td>${product.price - 5}</td></tr>);
+				});
+			});
+		});
+		var cartitems = [];
+		for(var z=0; z<this.state.cart; z++) {
+			cartitems.push(<li>asdad</li>);
+		}
 		return (
 			<div className="menu">
-				<h2>{this.state.location.name}</h2>
 				<div className="row">
-					<div className="col-md-8">
-						<table class="table" width="100%">
-							<thead>
-								<tr>
-									<th>Name</th> <th>Price</th>
-								</tr>
-							</thead>
+					<div className="col-md-7">
+						<table className="table">
 							<tbody>
+								{menuitems}
 							</tbody>
 						</table>
 					</div>
-				</div>
-				<div className="col-md-4">
-					<h3>Cart:</h3>
+					<div className="col-md-5">
+						<img className="img-thumbnail" src={this.state.location.images.image[0].resourceUri}/> 
+						<h2>{this.state.location.name}</h2>
+						<p>
+							{this.state.location.address.address1}<br/>
+							{this.state.location.address.city}, {this.state.location.address.state}<br/>
+							{this.state.location.address.zipCode}, {this.state.location.address.country}
+						</p>
+						<h3>Cart:</h3>
+						{cartitems}
+					</div>
 				</div>
 			</div>
 		);
-	}
-});
-
-var MenuItem = React.createClass({
-	getInitialState: function() {
-		return {
-			name: "test",
-			price: 3.0
-		};
-	},
-	render: function() {
-		return <tr><td>{this.state.name}</td><td>{this.state.price - 5}</td></tr>;
 	}
 });
 

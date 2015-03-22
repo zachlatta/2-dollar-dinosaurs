@@ -133,7 +133,7 @@ module.exports = {
   },
 
   getMerchant: function (username, password, merchantSlug, query) {
-    return doRequest('GET', buildURL('/merchant/'+merchantSlug, query), null,
+    return doRequest('GET', buildURL('/merchant/' + merchantSlug, query), null,
                      username, password);
-  },
+  }
 };

@@ -32,6 +32,7 @@ function authToken(username, password, method, contentMD5, epoch, relativeURL) {
 
   var toHash = util.format("%s\n%s\napplication/json\n%d\n%s", method,
                            contentMD5, epoch, relativeURL);
+  console.log(toHash);
   var signature = crypto
                     .createHmac('sha1', passHash)
                     .update(toHash)
@@ -42,8 +43,7 @@ function authToken(username, password, method, contentMD5, epoch, relativeURL) {
 function authorizationHeader(username, password, method, contentMD5,
                              relativeURL) {
   var epoch = (new Date()).getTime();
-  var token = authToken(username, password, method, contentMD5, epoch,
-                        relativeURL);
+  var token = authToken(username, password, method, contentMD5, epoch, relativeURL);
   return util.format('MWS=%s:%s:%d', username, token, epoch);
 }
 
@@ -65,7 +65,7 @@ function doRequest(method, reqURL, body, username, password) {
 
   var parsedURL = url.parse(reqURL);
 
-  var auth = authorizationHeader(username, password, md5sum, parsedURL.pathname);
+  var auth = authorizationHeader(username, password, method, md5sum, parsedURL.pathname);
   console.log(auth);
 
   req = req
@@ -120,4 +120,7 @@ module.exports = {
 
   getMerchants: function () {
   },
+
+  authToken: authToken,
+  authorizationHeader: authorizationHeader
 };

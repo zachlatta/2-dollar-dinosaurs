@@ -1,0 +1,5 @@
+# this is also used for the production database, it's called development here
+# because goose's default environment is development
+development:
+  driver: postgres
+  open: $DATABASE_URL

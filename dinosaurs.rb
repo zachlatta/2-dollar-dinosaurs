@@ -36,8 +36,10 @@ unless twilio_allocated_emails.nil?
 end
 
 $phone_numbers = [
+  {x: 650, y: 258, z: 2165},
   {x: 415, y: 212, z: 9917},
-  {x: 650, y: 681, z: 4156},
+  {x: 650, y: 285, z: 2165},
+  {x: 650, y: 273, z: 7821},
   {x: 650, y: 458, z: 5123}
 ]
 

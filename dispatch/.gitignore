@@ -32,3 +32,5 @@ node_modules
 .lock-wscript
 
 .env
+
+src/dist

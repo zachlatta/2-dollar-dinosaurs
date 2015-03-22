@@ -1,20 +1,12 @@
 var unirest = require('unirest');
 var phoneFormatter = require('phone-formatter');
 var util = require('util');
+var url = require('url');
 var crypto = require('crypto');
 
-// This is hardcoded into the application...
-var androidRegToken = 'j6xeqKf2xcCWobkQz2oERJf2ABc=';
+var defaultUser = 'android_user';
+var defaultPassHash = 'j6xeqKf2xcCWobkQz2oERJf2ABc=';
 var androidVersion = '1.5';
-
-var addAuthorization = function (req, username, password) {
-  if (!username && !password) { // if no username or password, use defaults
-    var epoch = (new Date()).getTime();
-    util.format('MWS=%s:%s:%d', epoch);
-    req.set('Authorization',
-            'MWS=android_user:ZGjuD3C7aeFxJGMEKrXp1mD5N1g=:1426388283917');
-  }
-};
 
 function parsePhoneNumber(number) {
   var normalized = phoneFormatter.format(number, 'NNN-NNN-NNNN');
@@ -26,21 +18,55 @@ function parsePhoneNumber(number) {
   };
 }
 
-function doRequest(method, url, body, username, password) {
+function hashPassword(pass, username) {
+  return crypto.createHmac('sha1', username).update(pass).digest('base64');
+}
+
+function authToken(username, password, method, contentMD5, epoch, relativeURL) {
+  var passHash;
+  if (password == defaultPassHash) {
+    passHash = defaultPassHash;
+  } else {
+    passHash = hashPassword(password, username);
+  }
+
+  var toHash = util.format("%s\n%s\napplication/json\n%d\n%s", method,
+                           contentMD5, epoch, relativeURL);
+  var signature = crypto
+                    .createHmac('sha1', passHash)
+                    .update(toHash)
+                    .digest('base64');
+  return signature;
+}
+
+function authorizationHeader(username, password, method, contentMD5,
+                             relativeURL) {
+  var epoch = (new Date()).getTime();
+  var token = authToken(username, password, method, contentMD5, epoch,
+                        relativeURL);
+  return util.format('MWS=%s:%s:%d', username, token, epoch);
+}
+
+function doRequest(method, reqURL, body, username, password) {
   var json = JSON.stringify(body);
   var md5sum = crypto.createHash('md5').update(json).digest('hex');
   var req = unirest;
 
   switch (method) {
     case 'POST':
-      req = req.post(url);
+      req = req.post(reqURL);
       break;
     case 'PUT':
-      req = req.put(url);
+      req = req.put(reqURL);
       break;
     default:
       console.error('%s is not a valid request method', method);
   }
+
+  var parsedURL = url.parse(reqURL);
+
+  var auth = authorizationHeader(username, password, md5sum, parsedURL.pathname);
+  console.log(auth);
 
   req = req
     .set('User-Agent', 'Android-Consumer-Application')
@@ -52,16 +78,14 @@ function doRequest(method, url, body, username, password) {
     .set('VERSION', '1.5')
     .set('DEVICE_TOKEN', '')
     .set('TIMEZONE', 'GMT')
-    .proxy('http://ngrok.com:60492')
+    .set('Authorization', auth)
     .strictSSL(false)
     .send(json);
-
-  addAuthorization(req, username, password);
 
   req
     .end(function (err, res) {
       if (err) {
-        console.log('Error making request: ', err);
+        console.log('Error making request: ', err.body);
       }
       console.log(res.body);
     });
@@ -90,9 +114,10 @@ module.exports = {
       }
     };
 
-    doRequest('PUT', 'https://api1.leapset.com/api-v2/service/customer', body);
+    doRequest('PUT', 'https://api1.leapset.com/api-v2/service/customer', body,
+              defaultUser, defaultPassHash);
   },
 
   getMerchants: function () {
-  }
+  },
 };

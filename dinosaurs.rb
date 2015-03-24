@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require 'faker'
-require 'byebug'
 require 'firebase'
 
 
@@ -36,10 +35,15 @@ unless twilio_allocated_emails.nil?
 end
 
 $phone_numbers = [
-  {x: 650, y: 458, z: 5123},
-  {x: 650, y: 681, z: 4156},
-  {x: 415, y: 323, z: 9917}
+  {x: "610", y: "761", z: "0083"},
+  {x: "484", y: "238", z: "0812"},
+  {x: "310", y: "801", z: "7309"},
+  {x: "310", y: "303", z: "4221"}
 ]
+
+  # {x: 415, y: 212, z: 9917},
+  # {x: 650, y: 681, z: 4156},
+  # {x: 650, y: 458, z: 5123},
 
 def generate_user(i=0)
   phone_number = $phone_numbers[i]

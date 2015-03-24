@@ -1,8 +1,4 @@
-Run
-
-`chmod -R 755  /Library/Ruby/Gems/2.0.0/gems/firebase-0.2.2`
-
-Get these ENV variables into your bash profile
+You need to export the following before using the script:
 
 ```
 export CC_NUMBER='XXXX'

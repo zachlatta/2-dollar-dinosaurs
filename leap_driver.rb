@@ -235,7 +235,7 @@ class LeapDriver < Selenium::WebDriver::Driver
       .select_by(:text, ENV['CC_EXP_YEAR'])
     self.find_element(:id, 'payment_cvvcode').send_keys ENV['CC_CVV']
 
-    if is_flag_on? "--no-confirm"
+    if is_flag_on? "--no_confirm"
       # do not confirm
     else
       wait_for_enter 'Please confirm your order. Exit the program to cancel the order'

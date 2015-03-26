@@ -1,5 +1,10 @@
 # 2-dollar-dinosaurs
 
+Abandon all hope, ye who enter here. The code is bad. The site is bad. But
+it works. I say that tentatively.
+
+---
+
 <img src="https://raw.githubusercontent.com/hackedu/dinosaurs/master/restaurant_dinosaur.png" width="50%">
 
 You need to export the following before using the script:

@@ -1,7 +1,7 @@
 # 2-dollar-dinosaurs
 
-Abandon all hope, ye who enter here. The code is bad. The site is bad. But
-it works. I say that tentatively.
+Abandon all hope, ye who enter here. The code is bad. The script is
+bad. But it _works_. I say that tentatively.
 
 ---
 

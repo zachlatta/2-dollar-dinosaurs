@@ -1,6 +1,8 @@
 # 2-dollar-dinosaurs
 
-*Note: One of the employees at the company that enables this to happen has reached out to us and told us that we permission to continue using this script*
+*Note: If we use this script, the company who runs the service we are ordering through pays for the difference in the order so restaurants still are paid fairly. We have spoken to an employee at this comany who likes our cause and has given us permission to continue using this script to fund our activities.*
+
+---
 
 Abandon all hope, ye who enter here. The code is bad. The script is
 bad. But it _works_. I say that tentatively.

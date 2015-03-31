@@ -1,6 +1,6 @@
 # 2-dollar-dinosaurs
 
-*Note: If we use this script, the company who runs the service we are ordering through pays for the difference in the order so restaurants still are paid fairly. We have spoken to an employee at this comany who likes our cause and has given us permission to continue using this script to fund our activities.*
+*Note: If we use this script, the company who runs the service we are ordering through pays for the difference in the order so restaurants are still paid fairly. We have spoken to an employee at this company who likes our cause and has given us permission to continue using this script to fund our activities.*
 
 ---
 

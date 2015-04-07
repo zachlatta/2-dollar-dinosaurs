@@ -67,7 +67,7 @@ var server = app.listen(app.get('port'), function () {
       });
       return Q.all(promises);
     })
-    .then(function (catalogs) { 
+    .then(function (catalogs) {
       var items = [];
       _.each(catalogs, function (catalog) {
         if(!catalog) return;
@@ -81,8 +81,7 @@ var server = app.listen(app.get('port'), function () {
       res.json(items);
     })
     .catch(function (err) {
-      console.error('error', err);
-      res.json(500, err);
+      res.status(500).json(err);
     })
     .done();
   });

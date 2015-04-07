@@ -184,12 +184,14 @@ var MenuPage = React.createClass({
 					menuitems.push(<tr><td>{product.name}</td><td>${product.price - 5}</td></tr>);
 				});
 			}
-			_.each(category.subCategories.category, function(subcategory) {
-				menuitems.push(<tr><th className="colspan2"><i>{category.name}</i></th></tr>);
-				_.each(subcategory.products.product, function(product) {
-					menuitems.push(<tr><td>{product.name}</td><td>${product.price - 5}</td></tr>);
+			if(category.subCategories) {
+				_.each(category.subCategories.category, function(subcategory) {
+					menuitems.push(<tr><th className="colspan2"><i>{category.name}</i></th></tr>);
+					_.each(subcategory.products.product, function(product) {
+						menuitems.push(<tr><td>{product.name}</td><td>${product.price - 5}</td></tr>);
+					});
 				});
-			});
+			}
 		});
 		var cartitems = [];
 		for(var z=0; z<this.state.cart; z++) {

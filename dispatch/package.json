@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/zachlatta/2-dollar-dinosaurs",
   "dependencies": {
+    "async": "^0.9.0",
     "body-parser": "^1.12.0",
     "browserify": "^9.0.3",
     "connect-pg-simple": "^2.3.0",

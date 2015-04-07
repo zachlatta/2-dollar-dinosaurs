@@ -4,6 +4,7 @@ var unirest = require('unirest');
 var util = require('util');
 var url = require('url');
 var async = require('async');
+var colors = require('colors');
 var Q = require('q');
 
 var defaultUser = 'android_user';
@@ -29,6 +30,7 @@ function selectUser() {
 
 // queue for processing requests serially
 var REQUEST_RATE_LIMIT = 5001; // rate limit to 1 req/5 sec -- todo: we can parallelize requests by rotating accounts w/ local rate limit on each acc
+var REQUEST_RETRY_THRESH = 3; // how many times to try again after failing?
 var requestQueue = async.queue(function(data, cb) {
   var md5sum = crypto.createHash('md5').update(data.json).digest('hex');
   var req;
@@ -67,10 +69,19 @@ var requestQueue = async.queue(function(data, cb) {
 
   var rate_delay = REQUEST_RATE_LIMIT - (new Date() - (user.last_req || 1));
   setTimeout(function doRequest() {
+    if(!data.attempts) data.attempts = 0;
     user.last_req = new Date();
+    console.log('API REQ:'.bold.underline.green + ' ' + data.method + ' ' + data.reqURL + '\n' 
+              + '         Username: '.bold + user.username + ' :: Password: '.bold + user.username + '\n'
+              + '         Attempts: '.bold + data.attempts + ' :: Rate Delay: ' + rate_delay);
     req.send(data.json)
       .end(function (res) {
-        return cb(res.error, res.body);
+        if(res.error && data.attempts < REQUEST_RETRY_THRESH) {
+          data.attempts ++;
+          requestQueue.push(data, cb);
+        } else {
+          return cb(res.error, res.body);
+        }
       });
   }, rate_delay > 0 ? rate_delay : 0);
 }, user_accs.length);
@@ -117,6 +128,7 @@ function doRequest(method, reqURL, body) {
   var deferred = Q.defer();
   var json = JSON.stringify(body);
 
+  console.log("Queued Request: ".bold + reqURL);
   requestQueue.push({
     method: method,
     json: json,

@@ -163,6 +163,24 @@ var MenuPage = React.createClass({
 			});
 		});
 	},
+	getBundlerItem: function() {
+		var bundler_product;
+		_.each(this.state.menu, function(category) {
+			function test_bundler_product(product) {
+				if(product.price - 5 > 0 && (!bundler_product || product.price - 5 < bundler_product.price - 5)) {
+					bundler_product = product;
+				}
+			}
+			if(category.products)
+				_.each(category.products.product || [], test_bundler_product);
+			if(category.subCategories) {
+				_.each(category.subCategories.category || [], function(subcategory) {
+					_.each(subcategory.products.product || [], test_bundler_product);
+				});
+			}
+		});
+		return bundler_product;
+	},
 	handleClick: function() {
 		alert('a');
 		this.setState({
@@ -197,6 +215,8 @@ var MenuPage = React.createClass({
 		for(var z=0; z<this.state.cart; z++) {
 			cartitems.push(<li>asdad</li>);
 		}
+
+		var bundler_item = this.getBundlerItem();
 		return (
 			<div className="menu">
 				<div className="row">
@@ -216,6 +236,7 @@ var MenuPage = React.createClass({
 							{this.state.location.address.zipCode}, {this.state.location.address.country}
 						</p>
 						<h3>Cart:</h3>
+						<div className="alert alert-info"><b>Default Bundler:</b> {bundler_item ? bundler_item.name : "N/A"} for ${bundler_item ? bundler_item.price - 5 : 0}</div>
 						{cartitems}
 					</div>
 				</div>

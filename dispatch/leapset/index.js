@@ -11,7 +11,7 @@ var defaultPassHash = 'j6xeqKf2xcCWobkQz2oERJf2ABc=';
 var androidVersion = '1.5';
 
 // queue for processing requests serially
-var REQUEST_RATE_LIMIT = 5000; // rate limit to 1 req/5 sec
+var REQUEST_RATE_LIMIT = 5001; // rate limit to 1 req/5 sec -- todo: we can parallelize requests by rotating accounts w/ local rate limit on each acc
 var LAST_REQUEST_PROCESS = new Date();
 var requestQueue = async.queue(function(data, cb) {
   var md5sum = crypto.createHash('md5').update(data.json).digest('hex');

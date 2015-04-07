@@ -38,6 +38,11 @@ var Dashboard = React.createClass({
 	    				<div className="logo">
 				        {logo_art}
 				      </div>
+			        <div className="search-form">
+				        <form name="searchForm">
+			            <input name="q" type="search" placeholder="Search for things"/>
+				        </form>
+				      </div>
 			      </div>
     			</nav>
     		</header>
@@ -248,30 +253,28 @@ var MenuPage = React.createClass({
 		var bundler_item = this.getBundlerItem();
 		return (
 			<div id="place-catalog" className="content">
-   			<div className="container">
-					<div className="menu">
-						<div className="row">
-							<div className="col-md-7">
-								<section className="catalog">
-					        <ul className="categories">
-					        	{menuitems}
-					        </ul>
-					      </section>
+   			<div className="container inner">
+	   			<section className="place-header">
+	   				<div className="bg"></div>
+	   				<div className="gradient"></div>
+		   			<div className="inner">
+		          <div className="icon">
+								<img width="100" height="100" src={this.state.location.images.image[0].resourceUri}/>
 							</div>
-							<div className="col-md-5">
-								<img className="img-thumbnail" src={this.state.location.images.image[0].resourceUri}/> 
-								<h2>{this.state.location.name}</h2>
-								<p>
-									{this.state.location.address.address1}<br/>
+		          <h1>{this.state.location.name}</h1>
+		          <h2><address>{this.state.location.address.address1}<br/>
 									{this.state.location.address.city}, {this.state.location.address.state}<br/>
-									{this.state.location.address.zipCode}, {this.state.location.address.country}
-								</p>
-								<h3>Cart:</h3>
-								<div className="alert alert-info"><b>Default Bundler:</b> {bundler_item ? bundler_item.name : "N/A"} for ${(bundler_item ? bundler_item.price - 5 : 0).toFixed(2)}</div>
-								{cartitems}
-							</div>
-						</div>
-					</div>
+									{this.state.location.address.zipCode}, {this.state.location.address.country}</address></h2>
+		        </div>
+		      </section>
+					<section className="catalog">
+						<div className="alert alert-info"><b>Default Bundler:</b> {bundler_item ? bundler_item.name : "N/A"} for ${(bundler_item ? bundler_item.price - 5 : 0).toFixed(2)}</div>	
+		        <ul className="categories">
+		        	{menuitems}
+		        </ul>
+		        <h3>Cart:</h3>
+						{cartitems}
+		      </section>
 				</div>
 			</div>
 		);

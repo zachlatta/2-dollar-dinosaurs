@@ -27,6 +27,8 @@
 	}
 }
 
+form { margin: 0px; }
+
 header 
 { 
 	position: fixed;
@@ -34,6 +36,10 @@ header
 	z-index: 100;
 	top: 0px;
 	left: 0px;
+
+	input[type=search] {
+		width: 100%;
+	}
 }
 
 section.hero
@@ -64,4 +70,9 @@ section.site
 	{
 		font-size: 16px;
 	}
+}
+
+#place-catalog .container
+{
+	max-width: 780px;
 }

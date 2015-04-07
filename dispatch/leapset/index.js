@@ -11,19 +11,7 @@ var defaultUser = 'android_user';
 var defaultPassHash = 'j6xeqKf2xcCWobkQz2oERJf2ABc=';
 var androidVersion = '1.5';
 
-var user_accs = [{
-  username: 'jfrost@cold.com',
-  password: 'foobarfoobar1'
-}, {
-  username: 'aacoder92@gmail.com',
-  password: 'foobarfoobar1'
-}, {
-  username: 'aacoder92+1242@gmail.com',
-  password: 'asdasdasd123'
-}, {
-  username: '325@foobarfoobar.com',
-  password: 'foobarfoobar1'
-}];
+var user_accs = require('./accounts.js');
 
 var last_user_index = 0;
 function selectUser() {

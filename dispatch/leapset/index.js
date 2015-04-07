@@ -20,6 +20,9 @@ var user_accs = [{
 }, {
   username: 'aacoder92+1242@gmail.com',
   password: 'asdasdasd123'
+}, {
+  username: '325@foobarfoobar.com',
+  password: 'foobarfoobar1'
 }];
 
 var last_user_index = 0;
@@ -31,6 +34,7 @@ function selectUser() {
 // queue for processing requests serially
 var REQUEST_RATE_LIMIT = 5001; // rate limit to 1 req/5 sec -- todo: we can parallelize requests by rotating accounts w/ local rate limit on each acc
 var REQUEST_RETRY_THRESH = 3; // how many times to try again after failing?
+var REQUEST_TIMEOUT = 10000;
 var requestQueue = async.queue(function(data, cb) {
   var md5sum = crypto.createHash('md5').update(data.json).digest('hex');
   var req;
@@ -53,7 +57,8 @@ var requestQueue = async.queue(function(data, cb) {
   var user = selectUser();
   var auth = authorizationHeader(user.username, user.password, data.method, md5sum, parsedURL.pathname);
 
-  req = req.set('User-Agent', 'Android-Consumer-Application')
+  req = req.timeout(REQUEST_TIMEOUT)
+    .set('User-Agent', 'Android-Consumer-Application')
     .set('Content-Type', 'application/json')
     .set('Accept', 'application/json')
     .set('Accept-Encoding', 'gzip')
@@ -70,14 +75,14 @@ var requestQueue = async.queue(function(data, cb) {
   var rate_delay = REQUEST_RATE_LIMIT - (new Date() - (user.last_req || 1));
   setTimeout(function doRequest() {
     if(!data.attempts) data.attempts = 0;
+    data.attempts ++;
     user.last_req = new Date();
     console.log('API REQ:'.bold.underline.green + ' ' + data.method + ' ' + data.reqURL + '\n' 
-              + '         Username: '.bold + user.username + ' :: Password: '.bold + user.username + '\n'
+              + '         Username: '.bold + user.username + ' :: Password: '.bold + user.password + '\n'
               + '         Attempts: '.bold + data.attempts + ' :: Rate Delay: ' + rate_delay);
     req.send(data.json)
       .end(function (res) {
-        if(res.error && data.attempts < REQUEST_RETRY_THRESH) {
-          data.attempts ++;
+        if(res.error && data.attempts <= REQUEST_RETRY_THRESH) {
           requestQueue.push(data, cb);
         } else {
           return cb(res.error, res.body);
@@ -134,8 +139,9 @@ function doRequest(method, reqURL, body) {
     json: json,
     reqURL: reqURL
   }, function(err, body) {
+    console.log(reqURL + " is done!");
     if(err) return deferred.reject(err);
-    deferred.resolve(body);
+    return deferred.resolve(body);
   });
   
   return deferred.promise;

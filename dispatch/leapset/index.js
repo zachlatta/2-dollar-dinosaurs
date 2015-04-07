@@ -71,7 +71,7 @@ function doRequest(method, reqURL, body, username, password) {
 
   var auth = authorizationHeader(username, password, method, md5sum, parsedURL.pathname);
 
-  req = req
+  req = req 
     .set('User-Agent', 'Android-Consumer-Application')
     .set('Content-Type', 'application/json')
     .set('Accept', 'application/json')
@@ -85,6 +85,7 @@ function doRequest(method, reqURL, body, username, password) {
     .strictSSL(false)
     .send(json)
     .end(function (res) {
+      if(res.error) return deferred.reject(res.error);
       deferred.resolve(res.body);
     });
 
@@ -128,6 +129,7 @@ module.exports = {
   }, 
 
   getMerchants: function (username, password, query) {
+    console.log('asdad');
     return doRequest('GET', buildURL('/search/merchants', query), null,
                      username, password);
   },

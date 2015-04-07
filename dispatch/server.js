@@ -45,7 +45,7 @@ var server = app.listen(app.get('port'), function () {
     leapset.getMerchants('jfrost@cold.com', 'foobarfoobar1', {
       includeImages: true
     }).then(function(data) {
-      res.json(data.body.merchant);
+      res.json(data.merchant);
     });
   });
 
@@ -67,9 +67,10 @@ var server = app.listen(app.get('port'), function () {
       });
       return Q.all(promises);
     })
-    .then(function (catalogs) {
+    .then(function (catalogs) { 
       var items = [];
       _.each(catalogs, function (catalog) {
+        if(!catalog) return;
         _.each(catalog.categories.category, function (item) {
           items.push(item);
         });
@@ -81,7 +82,7 @@ var server = app.listen(app.get('port'), function () {
     })
     .catch(function (err) {
       console.error('error', err);
-      res.json(err);
+      res.json(500, err);
     })
     .done();
   });

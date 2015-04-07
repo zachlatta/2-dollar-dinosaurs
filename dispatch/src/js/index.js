@@ -94,6 +94,7 @@ var LocationList = React.createClass({
 			return <div>Loading...</div>;
 		}
 		_.each(this.state.locations, function(loc) {
+			if(!loc) return;
 			locations.push(<LocationListItem key={loc.id} initId={loc.id} initName={loc.name} initLocation={loc.location} initImages={loc.images}/>);
 		});
 		if(locations.length <= 0) {
@@ -129,9 +130,10 @@ var LocationListItem = React.createClass({
 		};
 	},
 	render: function() {
-		var itemStyle = {
-		  backgroundImage: 'url(' + this.state.images.image[0].resourceUri + ')'
-		};
+		var itemStyle = {};
+		console.log(this.state);
+		if(this.state.images)
+			itemStyle.backgroundImage = 'url(' + this.state.images.image[0].resourceUri + ')';
 		return (
 			<li className="location" style={itemStyle}><a href={'/locations/' + this.state.id}>{this.state.name}</a></li>
 		);

@@ -10,9 +10,25 @@ var defaultUser = 'android_user';
 var defaultPassHash = 'j6xeqKf2xcCWobkQz2oERJf2ABc=';
 var androidVersion = '1.5';
 
+var user_accs = [{
+  username: 'jfrost@cold.com',
+  password: 'foobarfoobar1'
+}, {
+  username: 'aacoder92@gmail.com',
+  password: 'foobarfoobar1'
+}, {
+  username: 'aacoder92+1242@gmail.com',
+  password: 'asdasdasd123'
+}];
+
+var last_user_index = 0;
+function selectUser() {
+  last_user_index = last_user_index >= user_accs.length - 1 ? 0 : last_user_index + 1;
+  return user_accs[last_user_index];
+}
+
 // queue for processing requests serially
 var REQUEST_RATE_LIMIT = 5001; // rate limit to 1 req/5 sec -- todo: we can parallelize requests by rotating accounts w/ local rate limit on each acc
-var LAST_REQUEST_PROCESS = new Date();
 var requestQueue = async.queue(function(data, cb) {
   var md5sum = crypto.createHash('md5').update(data.json).digest('hex');
   var req;
@@ -32,7 +48,8 @@ var requestQueue = async.queue(function(data, cb) {
 
   var parsedURL = url.parse(data.reqURL);
 
-  var auth = authorizationHeader(data.username, data.password, data.method, md5sum, parsedURL.pathname);
+  var user = selectUser();
+  var auth = authorizationHeader(user.username, user.password, data.method, md5sum, parsedURL.pathname);
 
   req = req.set('User-Agent', 'Android-Consumer-Application')
     .set('Content-Type', 'application/json')
@@ -48,15 +65,15 @@ var requestQueue = async.queue(function(data, cb) {
     .set('Authorization', auth)
     .strictSSL(false);
 
-  var rate_delay = REQUEST_RATE_LIMIT - (new Date() - LAST_REQUEST_PROCESS);
+  var rate_delay = REQUEST_RATE_LIMIT - (new Date() - (user.last_req || 1));
   setTimeout(function doRequest() {
-    LAST_REQUEST_PROCESS = new Date();
+    user.last_req = new Date();
     req.send(data.json)
       .end(function (res) {
         return cb(res.error, res.body);
       });
   }, rate_delay > 0 ? rate_delay : 0);
-}, 1);
+}, user_accs.length);
 
 function parsePhoneNumber(number) {
   var normalized = phoneFormatter.format(number, 'NNN-NNN-NNNN');
@@ -96,16 +113,14 @@ function authorizationHeader(username, password, method, contentMD5,
   return util.format('MWS=%s:%s:%d', username, token, epoch);
 }
 
-function doRequest(method, reqURL, body, username, password) {
+function doRequest(method, reqURL, body) {
   var deferred = Q.defer();
   var json = JSON.stringify(body);
 
   requestQueue.push({
     method: method,
     json: json,
-    reqURL: reqURL,
-    username: username,
-    password: password
+    reqURL: reqURL
   }, function(err, body) {
     if(err) return deferred.reject(err);
     deferred.resolve(body);
@@ -150,21 +165,17 @@ module.exports = {
                      defaultPassHash);
   }, 
 
-  getMerchants: function (username, password, query) {
-    return doRequest('GET', buildURL('/search/merchants', query), null,
-                     username, password);
+  getMerchants: function (query) {
+    return doRequest('GET', buildURL('/search/merchants', query), null);
   },
 
-  getMerchant: function (username, password, merchantSlug, query) {
-    return doRequest('GET', buildURL('/merchant/'+merchantSlug, query), null,
-                     username, password);
+  getMerchant: function (merchantSlug, query) {
+    return doRequest('GET', buildURL('/merchant/'+merchantSlug, query), null);
   },
 
-  getCatalog: function (username, password, merchantSlug, menuID, query) {
+  getCatalog: function (merchantSlug, menuID, query) {
     return doRequest('GET',
                      buildURL('/catalog/'+merchantSlug+'/'+menuID, query),
-                     null,
-                     username,
-                     password);
+                     null);
   }
 };

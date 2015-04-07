@@ -42,7 +42,7 @@ var server = app.listen(app.get('port'), function () {
   var leapset = require('./leapset');
 
   app.get('/api/locations', function(req, res) {
-    leapset.getMerchants('jfrost@cold.com', 'foobarfoobar1', {
+    leapset.getMerchants({
       includeImages: true
     }).then(function(data) {
       res.json(data.merchant);
@@ -50,7 +50,7 @@ var server = app.listen(app.get('port'), function () {
   });
 
   app.get('/api/locations/:location_id', function(req, res) {
-    leapset.getMerchant('jfrost@cold.com', 'foobarfoobar1', req.params.location_id, {
+    leapset.getMerchant(req.params.location_id, {
       includeImages: true
     }).then(function(data) {
       res.json(data);
@@ -58,12 +58,10 @@ var server = app.listen(app.get('port'), function () {
   });
 
   app.get('/api/menus/:restaurantSlug', function(req, res) {
-    leapset.getMerchant('jfrost@cold.com', 'foobarfoobar1',
-                        req.params.restaurantSlug)
+    leapset.getMerchant(req.params.restaurantSlug)
     .then(function (merchant) {
       var promises = _.map(merchant.sessions.session, function (session) {
-        return leapset.getCatalog('jfrost@cold.com', 'foobarfoobar1',
-                                  req.params.restaurantSlug, session.id);
+        return leapset.getCatalog(req.params.restaurantSlug, session.id);
       });
       return Q.all(promises);
     })

@@ -57,6 +57,18 @@ var server = app.listen(app.get('port'), function () {
     });
   });
 
+  app.get('/api/locations/search', function(req, res) {
+    leapset.getMerchants(req.params.location_id, {
+      search: req.query.search,
+      recs: req.query.page,
+      sort: req.query.sort || 'DISTANCE',
+      searchRadius: req.query.searchRadius || 8,
+      includeImages: true
+    }).then(function(data) {
+      res.json(data);
+    });
+  });
+
   app.get('/api/menus/:restaurantSlug', function(req, res) {
     leapset.getMerchant(req.params.restaurantSlug)
     .then(function (merchant) {

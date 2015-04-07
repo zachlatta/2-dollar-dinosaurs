@@ -219,7 +219,7 @@ var MenuPage = React.createClass({
 				var sub_cats = [];
 				if(category.products) {
 					_.each(category.products.product, function(product) {
-						products.push(<li><a><div><div className="price">${product.price - 5}</div><div className="name">{product.name}</div></div></a></li>);
+						products.push(<li><a><div><div className="price">${(product.price - 5).toFixed(2)}</div><div className="name">{product.name}</div></div></a></li>);
 					});
 				}
 				if(category.subCategories)
@@ -267,7 +267,7 @@ var MenuPage = React.createClass({
 									{this.state.location.address.zipCode}, {this.state.location.address.country}
 								</p>
 								<h3>Cart:</h3>
-								<div className="alert alert-info"><b>Default Bundler:</b> {bundler_item ? bundler_item.name : "N/A"} for ${bundler_item ? bundler_item.price - 5 : 0}</div>
+								<div className="alert alert-info"><b>Default Bundler:</b> {bundler_item ? bundler_item.name : "N/A"} for ${(bundler_item ? bundler_item.price - 5 : 0).toFixed(2)}</div>
 								{cartitems}
 							</div>
 						</div>

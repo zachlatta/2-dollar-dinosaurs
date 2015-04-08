@@ -35,6 +35,9 @@ var Dashboard = React.createClass({
     		<header>
     			<nav id="navbar">
     				<div className="container">
+				      <div className="nav-buttons">
+			      		<a href="/brunchery">Brunchery</a>
+				      </div>
 	    				<div className="logo">
 				        {logo_art}
 				      </div>
@@ -281,12 +284,73 @@ var MenuPage = React.createClass({
 	}
 });
 
+var BruncheryPage = React.createClass({
+	contextTypes: {
+    router: React.PropTypes.func.isRequired
+  },
+	getInitialState: function() {
+		return { 
+			loading: true,
+			categories: []
+		};
+	},
+	componentDidMount: function() {
+		var self = this;
+		$.get('/api/brunchery', function(data) {
+			self.setState({
+				loading: false,
+				categories: data.menu.sections
+			});
+		});
+	},
+	render: function() {
+		if(this.state.loading) {
+			return <div className="content">Loading...</div>;
+		}
+		var menu_sections = [];
+		for(var i=0; i<this.state.categories.length; i++) {
+			var cat_name = this.state.categories[i].name,
+					cat_items = this.state.categories[i].items;
+			menu_sections.push(<BruncheryCategory initName={cat_name} initItems={cat_items} />);
+		}
+		return (
+			<div className="content">
+				{menu_sections}
+			</div>
+		);
+	}
+});
+
+var BruncheryCategory = React.createClass({
+	getInitialState: function() {
+		return {
+			name: this.props.initName,
+			items: this.props.initItems
+		};
+	},
+	render: function() {
+		var render_items = [];
+		_.each(this.state.items, function(item) {
+			render_items.push(<li style={{backgroundImage: 'url(' + item.photos.menu + ')'}}><a>{item.name}</a></li>);
+		});
+		return (
+			<section className="site">
+				<h3>{this.state.name}</h3>
+				<ul>
+					{render_items}
+				</ul>
+			</section>
+		);
+	}
+});
+
 // Routing
 
 var routes = (
   <Route handler={Dashboard} path="/">
 	  <DefaultRoute handler={LocationPage}/>
 		<Route name="menu" path="locations/:location_id" handler={MenuPage}/>
+		<Route name="brunchery" path="brunchery" handler={BruncheryPage}/>
 	  <NotFoundRoute handler={NotFound}/>
   </Route>
 );
